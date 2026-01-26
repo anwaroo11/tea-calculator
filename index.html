@@ -58,7 +58,7 @@
   <div class="wrap">
     <div class="card">
       <h1>حاسبة الشاي ☕</h1>
-      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك الوزنية + السكر حسب المذاق + كم بيالة تكفي + مدة الخدرة.</p>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + كم بيالة تكفي + مدة الخدرة.</p>
 
       <div class="grid">
         <div>
@@ -91,30 +91,33 @@
 <script>
 /** =========================
  *  DATA
- *  - gramsPerLiter: جرام شاي لكل 1 لتر
- *  - steepMinutes: مدة الخدرة (مدى)
- *  - sugarPerLiter: سكر لكل 1 لتر حسب المذاق (مناسب/ثقيل)
+ *  كل القيم "لكل 1 لتر"
+ *  teaPerLiter: مدى جرام الشاي (min/max)
+ *  sugarPerLiter: مدى السكر (min/max)
+ *  المذاق:
+ *    - مناسب => min
+ *    - ثقيل => max
+ *    - بدون سكر => شاي min + سكر 0
  * ========================= */
 const TEAS = [
   {
     id: "nahrain-op",
     teaType: "OP",
     brand: "شاي النهرين",
-    gramsPerLiter: 12,
-    steepMinutes: { min: 20, max: 25 },
-    sugarPerLiter: { normal: 50, heavy: 55 } // عدّلها حسب وزنيتك
+    teaPerLiter:   { min: 12, max: 12 },
+    sugarPerLiter: { min: 50, max: 55 },
+    steepMinutes:  { min: 20, max: 25 }
   },
   {
     id: "naif-op1",
     teaType: "OP1",
     brand: "شاي نايف",
-    gramsPerLiter: 14,
-    steepMinutes: { min: 30, max: 35 },
-    sugarPerLiter: { normal: 50, heavy: 55 } // عدّلها حسب وزنيتك
+    teaPerLiter:   { min: 14, max: 14.5 },
+    sugarPerLiter: { min: 55, max: 60 },
+    steepMinutes:  { min: 35 }
   }
 ];
 
-// افتراض البيالة
 const CUP_ML = 100;
 
 /** ===== Helpers ===== */
@@ -127,6 +130,16 @@ function toLitersFromMl(ml){
   const v = Number(ml);
   if (!Number.isFinite(v) || v <= 0) return NaN;
   return v / 1000;
+}
+function minutesText(r){
+  if (r.min === r.max) return `${r.min} دقيقة`;
+  return `${r.min} – ${r.max} دقيقة`;
+}
+function pickByTaste(range, taste){
+  // range: {min,max}
+  if (taste === "heavy") return range.max;
+  // مناسب + بدون سكر => الأقل
+  return range.min;
 }
 
 /** ===== UI ===== */
@@ -161,23 +174,26 @@ function render(){
     return;
   }
 
-  teaHint.textContent = `مدة الخدرة: ${tea.steepMinutes.min} – ${tea.steepMinutes.max} دقيقة`;
+  teaHint.textContent = `مدة الخدرة: ${minutesText(tea.steepMinutes)}`;
 
-  // الشاي
-  const teaGrams = tea.gramsPerLiter * liters;
+  const taste = tasteSel.value;
 
-  // السكر حسب المذاق (مناسب/ثقيل/بدون)
+  // اختيار الشاي حسب المذاق
+  const teaPerLiterPicked = pickByTaste(tea.teaPerLiter, taste);
+  const teaGrams = teaPerLiterPicked * liters;
+
+  // اختيار السكر حسب المذاق
   let sugarText = "بدون";
-  if (tasteSel.value !== "nosugar") {
-    const sugarPerLiter = tea.sugarPerLiter[tasteSel.value];
-    const sugarGrams = sugarPerLiter * liters;
+  if (taste !== "nosugar") {
+    const sugarPerLiterPicked = pickByTaste(tea.sugarPerLiter, taste);
+    const sugarGrams = sugarPerLiterPicked * liters;
     sugarText = `${smartNumber(sugarGrams)} جم`;
   }
 
   tasteHint.textContent =
-    `سكر هذا الشاي لكل 1 لتر: مناسب ${smartNumber(tea.sugarPerLiter.normal)} جم • ثقيل ${smartNumber(tea.sugarPerLiter.heavy)} جم`;
+    `هذا الشاي لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiter.min)} جم • سكر ${smartNumber(tea.sugarPerLiter.min)} جم) — ثقيل (شاي ${smartNumber(tea.teaPerLiter.max)} جم • سكر ${smartNumber(tea.sugarPerLiter.max)} جم)`;
 
-  // البيالات (تقريباً) على افتراض 100 مل
+  // البيالات (تقريباً)
   const waterMl = Number(waterMlInp.value);
   const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
   const cupsText = smartNumber(cups);
@@ -201,6 +217,7 @@ function render(){
 
     <div class="note">
       <b>المنتج:</b> ${tea.brand} — ${tea.teaType}<br/>
+      <b>المذاق:</b> ${taste === "normal" ? "مناسب" : taste === "heavy" ? "ثقيل" : "بدون سكر"}<br/>
       <b>الماء:</b> ${waterMlInp.value} مل
     </div>
   `;
