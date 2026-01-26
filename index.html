@@ -27,6 +27,15 @@
 
     label { font-size: 13px; opacity: .9; display:block; margin-bottom: 6px; }
     select, input {
+      /* حل مشكلة وضوح النص في القوائم على الكمبيوتر */
+select {
+  color: #e9eefc;
+}
+
+select option {
+  color: #111;          /* لون النص داخل القائمة */
+  background: #fff;     /* خلفية القائمة */
+}
       width: 100%;
       padding: 12px 12px;
       border-radius: 12px;
