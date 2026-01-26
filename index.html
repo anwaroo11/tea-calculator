@@ -89,7 +89,7 @@
   <div class="wrap">
     <div class="card">
       <h1>حاسبة الشاي ☕</h1>
-      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة + كم بيالة تكفي.</p>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة</p>
 
       <div class="grid">
         <div>
@@ -219,14 +219,14 @@ function getResultText(){
   const cups = Number(waterMlInp.value) / CUP_ML;
 
   return `
-شاي ${tea.brand} — ${tea.teaType}
+العلامة التجارية: ${tea.brand} — ${tea.teaType}
 الماء: ${waterMlInp.value} مل
 المذاق: ${taste}
 
 وزن الشاي: ${teaGrams} جم
 السكر: ${sugarText}
 مدة الخدرة: ${minutesText(tea.steepMinutes)}
-كم بيالة تقريباً: ${smartNumber(cups)}
+كم بيالة تكفي تقريباً: ${smartNumber(cups)}
 `.trim();
 }
 
@@ -273,7 +273,7 @@ function render(){
   const liters = toLitersFromMl(waterMlInp.value);
 
   if (!Number.isFinite(liters)) {
-    output.innerHTML = `⚠️ دخل كمية ماء صحيحة بالمل.`;
+    output.innerHTML = `⚠️ حط كمية ماء صحيحة بالمل.`;
     return;
   }
 
