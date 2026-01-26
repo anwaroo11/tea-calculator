@@ -58,7 +58,7 @@
   <div class="wrap">
     <div class="card">
       <h1>حاسبة الشاي ☕</h1>
-      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك الوزنية + السكر + كم بيالة تكفي + مدة الخدرة.</p>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك الوزنية + السكر حسب المذاق + كم بيالة تكفي + مدة الخدرة.</p>
 
       <div class="grid">
         <div>
@@ -74,9 +74,13 @@
         </div>
 
         <div>
-          <label>السكر</label>
-          <select id="sugarLevel"></select>
-          <div class="muted" id="sugarHint"></div>
+          <label>المذاق</label>
+          <select id="taste">
+            <option value="normal" selected>مناسب</option>
+            <option value="heavy">ثقيل</option>
+            <option value="nosugar">بدون سكر</option>
+          </select>
+          <div class="muted" id="tasteHint"></div>
         </div>
       </div>
 
@@ -89,7 +93,7 @@
  *  DATA
  *  - gramsPerLiter: جرام شاي لكل 1 لتر
  *  - steepMinutes: مدة الخدرة (مدى)
- *  - sugarPerLiter: مستويات السكر لكل شاي (لكل 1 لتر)
+ *  - sugarPerLiter: سكر لكل 1 لتر حسب المذاق (مناسب/ثقيل)
  * ========================= */
 const TEAS = [
   {
@@ -98,7 +102,7 @@ const TEAS = [
     brand: "شاي النهرين",
     gramsPerLiter: 12,
     steepMinutes: { min: 20, max: 25 },
-    sugarPerLiter: { light: 50, medium: 52.5, heavy: 55 } // <-- عدّلها حسب وزنيتك
+    sugarPerLiter: { normal: 50, heavy: 55 } // عدّلها حسب وزنيتك
   },
   {
     id: "naif-op1",
@@ -106,7 +110,7 @@ const TEAS = [
     brand: "شاي نايف",
     gramsPerLiter: 14,
     steepMinutes: { min: 30, max: 35 },
-    sugarPerLiter: { light: 48, medium: 52.5, heavy: 56 } // <-- مثال، عدّلها
+    sugarPerLiter: { normal: 50, heavy: 55 } // عدّلها حسب وزنيتك
   }
 ];
 
@@ -128,10 +132,10 @@ function toLitersFromMl(ml){
 /** ===== UI ===== */
 const teaSelect  = document.getElementById("teaSelect");
 const waterMlInp = document.getElementById("waterMl");
-const sugarLevel = document.getElementById("sugarLevel");
+const tasteSel   = document.getElementById("taste");
 const output     = document.getElementById("output");
 const teaHint    = document.getElementById("teaHint");
-const sugarHint  = document.getElementById("sugarHint");
+const tasteHint  = document.getElementById("tasteHint");
 
 function populateTeaSelect(){
   teaSelect.innerHTML = "";
@@ -148,30 +152,6 @@ function getSelectedTea(){
   return TEAS.find(t => t.id === id) || TEAS[0];
 }
 
-function populateSugarOptionsForTea(tea){
-  sugarLevel.innerHTML = "";
-
-  const options = [
-    { value: "light",  label: "خفيف" },
-    { value: "medium", label: "وسط" },
-    { value: "heavy",  label: "ثقيل" },
-    { value: "none",   label: "بدون سكر" }
-  ];
-
-  options.forEach(o => {
-    const opt = document.createElement("option");
-    opt.value = o.value;
-    opt.textContent = o.label;
-    sugarLevel.appendChild(opt);
-  });
-
-  // الافتراضي: وسط
-  sugarLevel.value = "medium";
-
-  const s = tea.sugarPerLiter;
-  sugarHint.textContent = `سكر هذا الشاي لكل 1 لتر: خفيف ${smartNumber(s.light)} • وسط ${smartNumber(s.medium)} • ثقيل ${smartNumber(s.heavy)} (جم)`;
-}
-
 function render(){
   const tea = getSelectedTea();
   const liters = toLitersFromMl(waterMlInp.value);
@@ -186,13 +166,16 @@ function render(){
   // الشاي
   const teaGrams = tea.gramsPerLiter * liters;
 
-  // السكر حسب الشاي
+  // السكر حسب المذاق (مناسب/ثقيل/بدون)
   let sugarText = "بدون";
-  if (sugarLevel.value !== "none") {
-    const sugarPerLiter = tea.sugarPerLiter[sugarLevel.value];
+  if (tasteSel.value !== "nosugar") {
+    const sugarPerLiter = tea.sugarPerLiter[tasteSel.value];
     const sugarGrams = sugarPerLiter * liters;
     sugarText = `${smartNumber(sugarGrams)} جم`;
   }
+
+  tasteHint.textContent =
+    `سكر هذا الشاي لكل 1 لتر: مناسب ${smartNumber(tea.sugarPerLiter.normal)} جم • ثقيل ${smartNumber(tea.sugarPerLiter.heavy)} جم`;
 
   // البيالات (تقريباً) على افتراض 100 مل
   const waterMl = Number(waterMlInp.value);
@@ -223,21 +206,13 @@ function render(){
   `;
 }
 
-function onTeaChange(){
-  const tea = getSelectedTea();
-  populateSugarOptionsForTea(tea);
-  render();
-}
-
-[teaSelect, waterMlInp, sugarLevel].forEach(el => {
+[teaSelect, waterMlInp, tasteSel].forEach(el => {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
 });
 
-teaSelect.addEventListener("change", onTeaChange);
-
 populateTeaSelect();
-onTeaChange();
+render();
 </script>
 </body>
 </html>
