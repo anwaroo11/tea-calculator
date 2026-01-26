@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>حاسبة الشاي</title>
   <style>
+    .actionBtn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: #e9eefc;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
     :root { font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial; }
     body { margin: 0; background:#0b1220; color:#e9eefc; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 24px; }
@@ -181,6 +195,33 @@ function tasteLabel(v){
 }
 
 function render(){
+  function getResultText() {
+  const tea = getSelectedTea();
+  const taste = tasteLabel(tasteSel.value);
+
+  const liters = toLitersFromMl(waterMlInp.value);
+  if (!Number.isFinite(liters)) return "";
+
+  const teaPerLiter = pickByTaste(tea.teaPerLiter, tasteSel.value);
+  const teaGrams = smartNumber(teaPerLiter * liters);
+
+  let sugarText = "بدون سكر";
+  if (tasteSel.value !== "nosugar") {
+    const sugarPerLiter = pickByTaste(tea.sugarPerLiter, tasteSel.value);
+    sugarText = smartNumber(sugarPerLiter * liters) + " جم";
+  }
+
+  return `
+شاي ${tea.brand} — ${tea.teaType}
+الماء: ${waterMlInp.value} مل
+المذاق: ${taste}
+
+وزن الشاي: ${teaGrams} جم
+السكر: ${sugarText}
+مدة الخدرة: ${minutesText(tea.steepMinutes)}
+`.trim();
+}
+
   const tea = getSelectedTea();
   const liters = toLitersFromMl(waterMlInp.value);
 
@@ -214,6 +255,11 @@ function render(){
 
   output.innerHTML = `
     <div class="kpi">
+    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+  <button id="copyBtn" class="actionBtn">نسخ النتيجة</button>
+  <button id="waBtn" class="actionBtn">مشاركة واتساب</button>
+</div>
+
       <div class="box">
         <div class="muted">وزن الشاي المطلوب</div>
         <div class="big">${smartNumber(teaGrams)} جم</div>
@@ -253,6 +299,20 @@ function render(){
 
 populateTeaSelect();
 render();
+  document.addEventListener("click", function(e){
+  if (e.target.id === "copyBtn") {
+    const text = getResultText();
+    navigator.clipboard.writeText(text);
+    e.target.textContent = "تم النسخ ✓";
+    setTimeout(() => e.target.textContent = "نسخ النتيجة", 1500);
+  }
+
+  if (e.target.id === "waBtn") {
+    const text = encodeURIComponent(getResultText());
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+  }
+});
+
 </script>
 </body>
 </html>
