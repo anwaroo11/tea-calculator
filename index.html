@@ -27,15 +27,6 @@
 
     label { font-size: 13px; opacity: .9; display:block; margin-bottom: 6px; }
     select, input {
-      /* حل مشكلة وضوح النص في القوائم على الكمبيوتر */
-select {
-  color: #e9eefc;
-}
-
-select option {
-  color: #111111;          /* لون النص داخل القائمة */
-  background: #fff;     /* خلفية القائمة */
-}
       width: 100%;
       padding: 12px 12px;
       border-radius: 12px;
@@ -50,6 +41,9 @@ select option {
     input[type=number] { appearance: textfield; -moz-appearance: textfield; }
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    /* حل وضوح القوائم على الكمبيوتر */
+    select option { color:#111; background:#fff; }
 
     .out {
       margin-top: 14px;
@@ -73,10 +67,8 @@ select option {
     .muted { opacity: .75; font-size: 12px; margin-top: 4px; display:flex; align-items:center; gap:8px; }
     .muted2 { opacity: .75; font-size: 12px; margin-top: 6px; }
     .big { font-size: 18px; font-weight: 700; margin-top: 6px; }
-
     .note { margin-top: 10px; font-size: 12px; opacity:.80; }
 
-    /* action buttons */
     .actions { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
     .actionBtn {
       padding: 10px 14px;
@@ -98,12 +90,19 @@ select option {
   <div class="wrap">
     <div class="card">
       <h1>حاسبة الشاي ☕</h1>
-      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة</p>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة + كم بيالة تكفي.</p>
 
       <div class="grid">
         <div>
           <label>اختر الشاي</label>
           <select id="teaSelect"></select>
+        </div>
+
+        <!-- يظهر فقط لو الشاي له تصنيفات (مثل المنيس) -->
+        <div id="typeWrap" style="display:none;">
+          <label>نوع الورق</label>
+          <select id="typeSelect"></select>
+          <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
         </div>
 
         <div>
@@ -128,36 +127,29 @@ select option {
   </div>
 
 <script>
-/** =========================
- *  DATA (عدّل هنا)
- *  كل القيم "لكل 1 لتر"
- *  teaPerLiter: مدى جرام الشاي (min/max)
- *  sugarPerLiter: مدى السكر (min/max)
- *  steepMinutes: مدى مدة الخدرة
- *
- *  المذاق:
- *   - مناسب => الأقل (min)
- *   - ثقيل => الأعلى (max)
- *   - بدون سكر => شاي min + سكر 0
- * ========================= */
-const TEAS = [
+/* =========================
+   ✅ وين تضيف الشاي؟
+   1) شاي عادي (بدون تصنيفات):
+      - ضيفه داخل SIMPLE_TEAS تحت
+
+   2) شاي بتصنيفات (مثل المنيس OP1/BOP1...):
+      - ضيفه داخل BRANDED_TEAS
+      - وخله يظهر كخيار واحد في القائمة الرئيسية (البراند)
+      - وبعدها تتحكم بالأنواع من typeSelect
+   ========================= */
+
+/* ---------- (A) الشاي العادي (بدون تصنيفات إضافية) ---------- */
+const SIMPLE_TEAS = [
   {
     id: "nahrain-op",
     teaType: "OP",
     brand: "شاي النهرين",
-    teaPerLiter:   { min: 12, max: 12 }, // مثال: إذا تبي يتغير مع المذاق: { min: 11, max: 13 }
+    // منطق قديم: مناسب = min ، ثقيل = max ، بدون سكر = min
+    teaPerLiter:   { min: 12, max: 12 },
     sugarPerLiter: { min: 50, max: 55 },
     steepMinutes:  { min: 20, max: 25 }
   },
   {
-    id: "abujabal",
-    teaType: "شاي العراقة",
-    brand: "شاي أبوجبل",
-    teaPerLiter:   { min: 10, max: 12 },
-    sugarPerLiter: { min: 50, max: 55 },
-    steepMinutes:  { min: 30, max: 35 }
-  },
-    {
     id: "naif-op1",
     teaType: "OP1",
     brand: "شاي نايف",
@@ -165,12 +157,44 @@ const TEAS = [
     sugarPerLiter: { min: 50, max: 55 },
     steepMinutes:  { min: 30, max: 35 }
   }
-  ];
+];
 
-// افتراض البيالة
+/* ---------- (B) شاي بتصنيفات (البراند الواحد له عدة أنواع) ---------- */
+/* مثال: المنيس (OP1, BOP1, FBOP1...) */
+const BRANDED_TEAS = [
+  {
+    brandId: "munais",
+    brand: "شاي المنيس",
+    // الأنواع (التصنيفات)
+    items: [
+      {
+        id: "munais-op1",
+        teaType: "OP1",
+        // ✅ حسب طلبك (لكل 1 لتر)
+        // مناسب: 12.5 / ثقيل: 13.5 / بدون سكر: 11.5
+        teaPerLiterByTaste: { normal: 12.5, heavy: 13.5, nosugar: 11.5 },
+        // السكر (إذا عندك أرقام خاصة عدلها هنا)
+        sugarPerLiter: { min: 50, max: 55 },
+        // الخدرة 25-30
+        steepMinutes: { min: 25, max: 30 }
+      }
+
+      // إذا تبي تضيف BOP1 / FBOP1 لاحقاً:
+      // ,{
+      //   id: "munais-bop1",
+      //   teaType: "BOP1",
+      //   teaPerLiterByTaste: { normal: 13, heavy: 14, nosugar: 12 },
+      //   sugarPerLiter: { min: 50, max: 55 },
+      //   steepMinutes: { min: 20, max: 25 }
+      // }
+    ]
+  }
+];
+
+/* افتراض البيالة */
 const CUP_ML = 100;
 
-/** ===== Helpers ===== */
+/* ===== Helpers ===== */
 function smartNumber(n){
   if (!Number.isFinite(n)) return "-";
   const isInt = Math.abs(n - Math.round(n)) < 1e-9;
@@ -185,9 +209,10 @@ function minutesText(r){
   if (r.min === r.max) return `${r.min} دقيقة`;
   return `${r.min} – ${r.max} دقيقة`;
 }
-function pickByTaste(range, taste){
+function pickRangeByTaste(range, taste){
+  // مناسب + بدون سكر => min ، ثقيل => max
   if (taste === "heavy") return range.max;
-  return range.min; // مناسب + بدون سكر => الأقل
+  return range.min;
 }
 function tasteLabel(v){
   if (v === "heavy") return "ثقيل";
@@ -195,55 +220,143 @@ function tasteLabel(v){
   return "مناسب";
 }
 
-/** ===== UI ===== */
+/* ===== UI ===== */
 const teaSelect  = document.getElementById("teaSelect");
+const typeWrap   = document.getElementById("typeWrap");
+const typeSelect = document.getElementById("typeSelect");
 const waterMlInp = document.getElementById("waterMl");
 const tasteSel   = document.getElementById("taste");
 const tasteHint  = document.getElementById("tasteHint");
 const output     = document.getElementById("output");
 
-function populateTeaSelect(){
+/* نجمع قائمة الاختيارات الرئيسية:
+   - كل الشاي العادي كخيار مستقل
+   - وكل البراندات اللي لها تصنيفات كخيار واحد "brand:*" */
+function populateMainSelect(){
   teaSelect.innerHTML = "";
-  TEAS.forEach(t => {
+
+  // الشاي العادي
+  SIMPLE_TEAS.forEach(t => {
     const opt = document.createElement("option");
-    opt.value = t.id;
+    opt.value = `simple:${t.id}`;
     opt.textContent = `${t.brand} — ${t.teaType}`;
+    teaSelect.appendChild(opt);
+  });
+
+  // البراندات (تصنيفات)
+  BRANDED_TEAS.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = `brand:${b.brandId}`;
+    opt.textContent = `${b.brand}`; // يظهر كبراند فقط
     teaSelect.appendChild(opt);
   });
 }
 
-function getSelectedTea(){
-  const id = teaSelect.value;
-  return TEAS.find(t => t.id === id) || TEAS[0];
+function getSelectedTeaObject(){
+  const val = teaSelect.value || "";
+  const taste = tasteSel.value;
+
+  // شاي عادي
+  if (val.startsWith("simple:")) {
+    const id = val.replace("simple:", "");
+    const tea = SIMPLE_TEAS.find(x => x.id === id) || SIMPLE_TEAS[0];
+
+    // نخفي التصنيفات
+    typeWrap.style.display = "none";
+
+    // نحول بياناته لشكل موحد للاستخدام لاحقاً
+    const teaPerLiterPicked = pickRangeByTaste(tea.teaPerLiter, taste);
+    return {
+      brandLabel: tea.brand,
+      teaType: tea.teaType,
+      teaPerLiterPicked,
+      sugarPerLiterPicked: (taste === "nosugar") ? 0 : pickRangeByTaste(tea.sugarPerLiter, taste),
+      steepMinutes: tea.steepMinutes,
+      hintText: `لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiter.min)} • سكر ${smartNumber(tea.sugarPerLiter.min)}) — ثقيل (شاي ${smartNumber(tea.teaPerLiter.max)} • سكر ${smartNumber(tea.sugarPerLiter.max)})`
+    };
+  }
+
+  // براند بتصنيفات
+  if (val.startsWith("brand:")) {
+    const brandId = val.replace("brand:", "");
+    const brand = BRANDED_TEAS.find(b => b.brandId === brandId) || BRANDED_TEAS[0];
+
+    // نفعّل قائمة التصنيفات
+    typeWrap.style.display = "block";
+
+    // عبي الأنواع إذا فاضية أو لو تغير البراند
+    const existingIds = Array.from(typeSelect.options).map(o => o.value);
+    const shouldRebuild = existingIds.length !== brand.items.length ||
+      (existingIds[0] && !brand.items.some(it => it.id === existingIds[0]));
+
+    if (shouldRebuild) {
+      typeSelect.innerHTML = "";
+      brand.items.forEach(it => {
+        const opt = document.createElement("option");
+        opt.value = it.id;
+        opt.textContent = it.teaType;
+        typeSelect.appendChild(opt);
+      });
+      typeSelect.value = brand.items[0].id;
+    }
+
+    const selectedItem = brand.items.find(it => it.id === typeSelect.value) || brand.items[0];
+
+    // المنيس عنده teaPerLiterByTaste (حسب طلبك)
+    const teaPerLiterPicked = selectedItem.teaPerLiterByTaste
+      ? Number(selectedItem.teaPerLiterByTaste[taste])
+      : pickRangeByTaste(selectedItem.teaPerLiter, taste); // لو تضيف أنواع مستقبلًا بنظام range
+
+    const sugarPerLiterPicked = (taste === "nosugar") ? 0 : pickRangeByTaste(selectedItem.sugarPerLiter, taste);
+
+    const hint = selectedItem.teaPerLiterByTaste
+      ? `لكل 1 لتر: مناسب (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.normal)} • سكر ${smartNumber(selectedItem.sugarPerLiter.min)}) — ثقيل (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.heavy)} • سكر ${smartNumber(selectedItem.sugarPerLiter.max)}) — بدون سكر (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.nosugar)} • سكر 0)`
+      : `لكل 1 لتر: مناسب (شاي ${smartNumber(selectedItem.teaPerLiter.min)} • سكر ${smartNumber(selectedItem.sugarPerLiter.min)}) — ثقيل (شاي ${smartNumber(selectedItem.teaPerLiter.max)} • سكر ${smartNumber(selectedItem.sugarPerLiter.max)})`;
+
+    return {
+      brandLabel: brand.brand,
+      teaType: selectedItem.teaType,
+      teaPerLiterPicked,
+      sugarPerLiterPicked,
+      steepMinutes: selectedItem.steepMinutes,
+      hintText: hint
+    };
+  }
+
+  // fallback
+  typeWrap.style.display = "none";
+  const t = SIMPLE_TEAS[0];
+  return {
+    brandLabel: t.brand,
+    teaType: t.teaType,
+    teaPerLiterPicked: pickRangeByTaste(t.teaPerLiter, tasteSel.value),
+    sugarPerLiterPicked: (tasteSel.value === "nosugar") ? 0 : pickRangeByTaste(t.sugarPerLiter, tasteSel.value),
+    steepMinutes: t.steepMinutes,
+    hintText: ""
+  };
 }
 
 function getResultText(){
-  const tea = getSelectedTea();
-  const taste = tasteLabel(tasteSel.value);
-
   const liters = toLitersFromMl(waterMlInp.value);
   if (!Number.isFinite(liters)) return "";
 
-  const teaPerLiter = pickByTaste(tea.teaPerLiter, tasteSel.value);
-  const teaGrams = smartNumber(teaPerLiter * liters);
+  const teaObj = getSelectedTeaObject();
+  const tasteText = tasteLabel(tasteSel.value);
 
-  let sugarText = "بدون سكر";
-  if (tasteSel.value !== "nosugar") {
-    const sugarPerLiter = pickByTaste(tea.sugarPerLiter, tasteSel.value);
-    sugarText = smartNumber(sugarPerLiter * liters) + " جم";
-  }
+  const teaGrams = smartNumber(teaObj.teaPerLiterPicked * liters);
+  const sugarText = teaObj.sugarPerLiterPicked === 0 ? "بدون سكر" : (smartNumber(teaObj.sugarPerLiterPicked * liters) + " جم");
 
   const cups = Number(waterMlInp.value) / CUP_ML;
 
   return `
-العلامة التجارية: ${tea.brand} — ${tea.teaType}
+شاي ${teaObj.brandLabel} — ${teaObj.teaType}
 الماء: ${waterMlInp.value} مل
-المذاق: ${taste}
+المذاق: ${tasteText}
 
 وزن الشاي: ${teaGrams} جم
 السكر: ${sugarText}
-مدة الخدرة: ${minutesText(tea.steepMinutes)}
-كم بيالة تكفي تقريباً: ${smartNumber(cups)}
+مدة الخدرة: ${minutesText(teaObj.steepMinutes)}
+كم بيالة تقريباً: ${smartNumber(cups)}
 `.trim();
 }
 
@@ -259,7 +372,7 @@ function bindActionButtons(){
       try {
         await navigator.clipboard.writeText(text);
       } catch (e) {
-        // fallback (مضمون)
+        // fallback مضمون
         const ta = document.createElement("textarea");
         ta.value = text;
         ta.style.position = "fixed";
@@ -279,95 +392,92 @@ function bindActionButtons(){
     waBtn.onclick = () => {
       const text = encodeURIComponent(getResultText());
       if (!text) return;
-      // الأفضل للجوال (بدون بوب-اب)
       window.location.href = `https://wa.me/?text=${text}`;
     };
   }
 }
 
 function render(){
-  const tea = getSelectedTea();
-  const liters = toLitersFromMl(waterMlInp.value);
+  try {
+    const liters = toLitersFromMl(waterMlInp.value);
+    if (!Number.isFinite(liters)) {
+      output.innerHTML = `⚠️ دخل كمية ماء صحيحة بالمل.`;
+      return;
+    }
 
-  if (!Number.isFinite(liters)) {
-    output.innerHTML = `⚠️ حط كمية ماء صحيحة بالمل.`;
-    return;
+    const teaObj = getSelectedTeaObject();
+    const taste = tasteSel.value;
+
+    // hints
+    tasteHint.textContent = teaObj.hintText;
+
+    // calculations
+    const teaGrams = teaObj.teaPerLiterPicked * liters;
+    const sugarGrams = teaObj.sugarPerLiterPicked === 0 ? 0 : (teaObj.sugarPerLiterPicked * liters);
+
+    const waterMl = Number(waterMlInp.value);
+    const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
+
+    const sugarText = (teaObj.sugarPerLiterPicked === 0) ? "بدون سكر" : `${smartNumber(sugarGrams)} جم`;
+
+    output.innerHTML = `
+      <div class="kpi">
+        <div class="box">
+          <div class="muted"><i data-lucide="scale"></i> وزن الشاي المطلوب</div>
+          <div class="big">${smartNumber(teaGrams)} جم</div>
+          <div class="muted2">${tasteLabel(taste)} • لكل لتر: ${smartNumber(teaObj.teaPerLiterPicked)} جم</div>
+        </div>
+
+        <div class="box">
+          <div class="muted"><i data-lucide="candy"></i> السكر</div>
+          <div class="big">${sugarText}</div>
+          <div class="muted2">${taste === "nosugar" ? "بدون سكر" : `لكل لتر: ${smartNumber(teaObj.sugarPerLiterPicked)} جم`}</div>
+        </div>
+
+        <div class="box">
+          <div class="muted"><i data-lucide="clock"></i> مدة الخدرة</div>
+          <div class="big">${minutesText(teaObj.steepMinutes)}</div>
+        </div>
+
+        <div class="box">
+          <div class="muted"><i data-lucide="coffee"></i> كم بيالة تكفي (تقريباً)</div>
+          <div class="big">${smartNumber(cups)}</div>
+          <div class="muted2">حجم البيالة الواحدة تقريبًا ١٠٠ مل</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="copyBtn" class="actionBtn">نسخ النتيجة</button>
+        <button id="waBtn" class="actionBtn">مشاركة واتساب</button>
+      </div>
+
+      <div class="note">
+        <b>المنتج:</b> ${teaObj.brandLabel} — ${teaObj.teaType}<br/>
+        <b>المذاق:</b> ${tasteLabel(taste)}<br/>
+        <b>الماء:</b> ${waterMlInp.value} مل
+      </div>
+    `;
+
+    if (window.lucide) lucide.createIcons();
+    bindActionButtons();
+  } catch (e) {
+    output.innerHTML = `
+      <div style="padding:12px;border-radius:12px;border:1px solid rgba(255,80,80,.35);background:rgba(255,80,80,.10)">
+        ⚠️ صار خطأ في بيانات الشاي (قوس/فاصلة/قيمة).
+        <div style="opacity:.8;font-size:12px;margin-top:6px">تفاصيل: ${String(e.message || e)}</div>
+      </div>
+    `;
   }
-
-  const taste = tasteSel.value;
-
-  // الشاي حسب المذاق
-  const teaPerLiterPicked = pickByTaste(tea.teaPerLiter, taste);
-  const teaGrams = teaPerLiterPicked * liters;
-
-  // السكر حسب المذاق
-  let sugarText = "بدون";
-  if (taste !== "nosugar") {
-    const sugarPerLiterPicked = pickByTaste(tea.sugarPerLiter, taste);
-    const sugarGrams = sugarPerLiterPicked * liters;
-    sugarText = `${smartNumber(sugarGrams)} جم`;
-  } else {
-    sugarText = "بدون سكر";
-  }
-
-  tasteHint.textContent =
-    `لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiter.min)} جم • سكر ${smartNumber(tea.sugarPerLiter.min)} جم) — ثقيل (شاي ${smartNumber(tea.teaPerLiter.max)} جم • سكر ${smartNumber(tea.sugarPerLiter.max)} جم)`;
-
-  // البيالات (تقريباً)
-  const waterMl = Number(waterMlInp.value);
-  const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
-
-  output.innerHTML = `
-    <div class="kpi">
-      <div class="box">
-        <div class="muted"><i data-lucide="scale"></i> وزن الشاي المطلوب</div>
-        <div class="big">${smartNumber(teaGrams)} جم</div>
-        <div class="muted2">${tasteLabel(taste)} • لكل لتر: ${smartNumber(teaPerLiterPicked)} جم</div>
-      </div>
-
-      <div class="box">
-        <div class="muted"><i data-lucide="candy"></i> السكر</div>
-        <div class="big">${sugarText}</div>
-        <div class="muted2">${taste === "nosugar" ? "بدون سكر" : `لكل لتر: ${smartNumber(pickByTaste(tea.sugarPerLiter, taste))} جم`}</div>
-      </div>
-
-      <div class="box">
-        <div class="muted"><i data-lucide="clock"></i> مدة الخدرة</div>
-        <div class="big">${minutesText(tea.steepMinutes)}</div>
-      </div>
-
-      <div class="box">
-        <div class="muted"><i data-lucide="coffee"></i> كم بيالة تكفي (تقريباً)</div>
-        <div class="big">${smartNumber(cups)}</div>
-        <div class="muted2">حجم البيالة الواحدة تقريبًا ١٠٠ مل</div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button id="copyBtn" class="actionBtn">نسخ النتيجة</button>
-      <button id="waBtn" class="actionBtn">مشاركة واتساب</button>
-    </div>
-
-    <div class="note">
-      <b>المنتج:</b> ${tea.brand} — ${tea.teaType}<br/>
-      <b>المذاق:</b> ${tasteLabel(taste)}<br/>
-      <b>الماء:</b> ${waterMlInp.value} مل
-    </div>
-  `;
-
-  // فعّل الأيقونات بعد إدخالها للـ DOM
-  if (window.lucide) lucide.createIcons();
-
-  // اربط أزرار النسخ والواتساب بعد كل render
-  bindActionButtons();
 }
 
-[teaSelect, waterMlInp, tasteSel].forEach(el => {
-  el.addEventListener("input", render);
-  el.addEventListener("change", render);
-});
+/* events */
+teaSelect.addEventListener("change", render);
+typeSelect.addEventListener("change", render);
+waterMlInp.addEventListener("input", render);
+tasteSel.addEventListener("change", render);
 
-populateTeaSelect();
+/* init */
+populateMainSelect();
 render();
 </script>
 </body>
