@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>حاسبة الشاي</title>
   <style>
+   /* توحيد شكل وأبعاد الحقول */
+select, input { box-sizing: border-box; height: 48px; }
+
+/* إزالة أزرار/أسهم input رقم (تخرب الشكل ببعض الأجهزة) */
+input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } 
     :root { font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial; }
     body { margin: 0; background:#0b1220; color:#e9eefc; }
     .wrap { max-width: 880px; margin: 0 auto; padding: 24px; }
