@@ -32,17 +32,6 @@
     }
     .row { display:flex; gap:10px; align-items:center; }
     .row > * { flex:1; }
-    .btns { display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap; }
-    button {
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.10);
-      color:#e9eefc;
-      cursor:pointer;
-      font-size: 14px;
-    }
-    button:hover { background: rgba(255,255,255,0.16); }
     .out {
       margin-top: 14px;
       background: rgba(0,0,0,0.22);
@@ -56,9 +45,8 @@
     .box { padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);}
     .muted { opacity: .85; font-size: 13px; }
     .big { font-size: 18px; font-weight: 700; margin-top: 6px; }
-    .note { margin-top: 10px; font-size: 12px; opacity:.78; }
+    .note { margin-top: 10px; font-size: 12px; opacity:.80; }
     .footer { margin-top: 14px; font-size: 12px; opacity:.75; }
-    a { color:#a9c7ff; }
   </style>
 </head>
 
@@ -66,11 +54,11 @@
   <div class="wrap">
     <div class="card">
       <h1>حاسبة الشاي ☕</h1>
-      <p class="sub">اختر نوع الشاي/البراند، وحط كمية الماء… ويطلع لك الوزن + السكر + مدة الخدرة.</p>
+      <p class="sub">اختر البراند + نوع التصنيف، وحط كمية الماء… وتطلع لك الوزنية + السكر + كم بيالة تكفي + مدة الخدرة.</p>
 
       <div class="grid">
         <div>
-          <label>اختر المنتج</label>
+          <label>اختر الشاي</label>
           <select id="teaSelect"></select>
         </div>
 
@@ -88,32 +76,26 @@
 
         <div>
           <label>السكر</label>
-          <select id="sugarMode">
-            <option value="range">حسب مدى السكر المسجل</option>
+          <select id="sugarLevel">
+            <option value="light">خفيف</option>
+            <option value="medium" selected>وسط</option>
+            <option value="heavy">ثقيل</option>
             <option value="none">بدون سكر</option>
           </select>
-          <div class="muted" style="margin-top:6px">حالياً: يا “حسب المدى” أو “بدون”. نقدر نضيف خفيف/وسط/ثقيل بعدين.</div>
+          <div class="muted" style="margin-top:6px">خفيف = 50 جم/لتر • وسط = 52.5 • ثقيل = 55</div>
         </div>
 
         <div>
-          <label>تقريب الأرقام</label>
-          <select id="roundMode">
-            <option value="1">تقريب لرقم عشري (مثل 6.5)</option>
-            <option value="0">تقريب لعدد صحيح (مثل 7)</option>
-            <option value="2">رقمين عشريين (مثل 6.50)</option>
-          </select>
+          <label>حجم البيالة (مل)</label>
+          <input id="cupMl" type="number" inputmode="decimal" min="10" value="100" />
+          <div class="muted" style="margin-top:6px">الافتراضي 100 مل. غيّرها إذا بيالاتكم أكبر/أصغر.</div>
         </div>
-      </div>
-
-      <div class="btns">
-        <button id="calcBtn">احسب</button>
-        <button id="resetBtn">تصفير</button>
       </div>
 
       <div class="out" id="output" aria-live="polite"></div>
 
       <div class="footer">
-        تبي تضيف منتجات زيادة؟ فقط زوّدني بنفس تنسيق بياناتك، أو عدّل ملف البيانات داخل الكود (قسم <b>DATA</b>).
+        لإضافة شاي جديد: عدّل قسم <b>DATA</b> داخل الملف (تحت).
       </div>
     </div>
   </div>
@@ -121,64 +103,51 @@
 <script>
 /** =========================
  *  DATA (منتجاتك)
- *  كل القيم "لكل 1 لتر"
- *  تقدر تضيف عناصر زيادة بنفس الشكل
+ *  - gramsPerLiter: جرام شاي لكل 1 لتر
+ *  - steepMinutes: مدى مدة الخدرة بالدقائق
  * ========================= */
 const TEAS = [
   {
     id: "nahrain-op",
     teaType: "OP",
     brand: "شاي النهرين",
-    gramsPerLiter: { min: 12, max: 12 },
-    sugarPerLiter: { min: 50, max: 55 },
-    steepMinutes:  { min: 20, max: 25 }
+    gramsPerLiter: 12,
+    steepMinutes: { min: 20, max: 25 }
   },
   {
     id: "naif-op1",
     teaType: "OP1",
     brand: "شاي نايف",
-    gramsPerLiter: { min: 14, max: 14 },
-    sugarPerLiter: { min: 50, max: 55 },
-    steepMinutes:  { min: 30, max: 35 }
+    gramsPerLiter: 14,
+    steepMinutes: { min: 30, max: 35 }
   }
 ];
 
-/** ===== Helpers ===== */
-const fmt = (num, decimals) => {
-  const f = Number(num);
-  if (!Number.isFinite(f)) return "-";
-  return f.toFixed(decimals);
+// مستويات السكر (جم لكل لتر)
+const SUGAR_PER_LITER = {
+  light: 50,
+  medium: 52.5,
+  heavy: 55
 };
 
-const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
-
+/** ===== Helpers ===== */
+function smartNumber(n){
+  if (!Number.isFinite(n)) return "-";
+  const isInt = Math.abs(n - Math.round(n)) < 1e-9;
+  return isInt ? String(Math.round(n)) : n.toFixed(1);
+}
 function toLiters(value, unit){
   const v = Number(value);
   if (!Number.isFinite(v) || v <= 0) return NaN;
   return unit === "l" ? v : (v / 1000);
 }
 
-function rangeMultiply(range, liters){
-  return { min: range.min * liters, max: range.max * liters };
-}
-
-function rangeText(r, decimals){
-  // إذا نفس القيمة، نطلع رقم واحد
-  if (Math.abs(r.min - r.max) < 1e-9) return fmt(r.min, decimals);
-  return `${fmt(r.min, decimals)} – ${fmt(r.max, decimals)}`;
-}
-
-function minutesText(r){
-  if (r.min === r.max) return `${r.min} دقيقة`;
-  return `${r.min} – ${r.max} دقيقة`;
-}
-
 /** ===== UI ===== */
 const teaSelect = document.getElementById("teaSelect");
 const waterValue = document.getElementById("waterValue");
 const waterUnit  = document.getElementById("waterUnit");
-const sugarMode  = document.getElementById("sugarMode");
-const roundMode  = document.getElementById("roundMode");
+const sugarLevel = document.getElementById("sugarLevel");
+const cupMl      = document.getElementById("cupMl");
 const output     = document.getElementById("output");
 
 function populateSelect(){
@@ -186,7 +155,8 @@ function populateSelect(){
   TEAS.forEach(t => {
     const opt = document.createElement("option");
     opt.value = t.id;
-    opt.textContent = `${t.teaType} — ${t.brand}`;
+    // المطلوب: البراند أول ثم نوع التصنيف
+    opt.textContent = `${t.brand} — ${t.teaType}`;
     teaSelect.appendChild(opt);
   });
 }
@@ -199,56 +169,58 @@ function getSelectedTea(){
 function render(){
   const tea = getSelectedTea();
   const liters = toLiters(waterValue.value, waterUnit.value);
-  const decimals = Number(roundMode.value);
 
   if (!Number.isFinite(liters)) {
     output.innerHTML = `⚠️ دخل كمية ماء صحيحة.`;
     return;
   }
 
-  const teaRange   = rangeMultiply(tea.gramsPerLiter, liters);
-  const sugarRange = rangeMultiply(tea.sugarPerLiter, liters);
+  // الشاي
+  const teaGrams = tea.gramsPerLiter * liters;
 
-  const teaGramsText = rangeText(teaRange, decimals);
-  const sugarText = sugarMode.value === "none"
-    ? "بدون"
-    : rangeText(sugarRange, decimals);
+  // السكر
+  let sugarText = "بدون";
+  if (sugarLevel.value !== "none") {
+    const sugarPerLiter = SUGAR_PER_LITER[sugarLevel.value];
+    const sugarGrams = sugarPerLiter * liters;
+    sugarText = `${smartNumber(sugarGrams)} جم`;
+  }
+
+  // البيالات
+  const cup = Number(cupMl.value);
+  const waterMl = liters * 1000;
+  let cupsText = "-";
+  if (Number.isFinite(cup) && cup > 0) {
+    const cups = waterMl / cup;
+    cupsText = smartNumber(cups);
+  }
 
   output.innerHTML = `
     <div class="kpi">
       <div class="box">
         <div class="muted">وزن الشاي المطلوب</div>
-        <div class="big">${teaGramsText} جم</div>
+        <div class="big">${smartNumber(teaGrams)} جم</div>
       </div>
       <div class="box">
         <div class="muted">السكر</div>
-        <div class="big">${sugarText}${sugarMode.value === "none" ? "" : " جم"}</div>
+        <div class="big">${sugarText}</div>
       </div>
       <div class="box">
-        <div class="muted">مدة الخدرة</div>
-        <div class="big">${minutesText(tea.steepMinutes)}</div>
+        <div class="muted">كم بيالة تكفي</div>
+        <div class="big">${cupsText}</div>
       </div>
     </div>
 
     <div class="note">
-      <b>المنتج:</b> ${tea.teaType} — ${tea.brand}<br/>
-      <b>الماء:</b> ${waterValue.value} ${waterUnit.value === "l" ? "لتر" : "مل"} (${fmt(liters, 3)} لتر)
+      <b>المنتج:</b> ${tea.brand} — ${tea.teaType}<br/>
+      <b>مدة الخدرة:</b> ${tea.steepMinutes.min} – ${tea.steepMinutes.max} دقيقة<br/>
+      <b>الماء:</b> ${waterValue.value} ${waterUnit.value === "l" ? "لتر" : "مل"} (${smartNumber(liters)} لتر)
     </div>
   `;
 }
 
-document.getElementById("calcBtn").addEventListener("click", render);
-document.getElementById("resetBtn").addEventListener("click", () => {
-  teaSelect.selectedIndex = 0;
-  waterValue.value = 1000;
-  waterUnit.value = "ml";
-  sugarMode.value = "range";
-  roundMode.value = "1";
-  render();
-});
-
-// تحديث تلقائي عند التغيير
-[teaSelect, waterValue, waterUnit, sugarMode, roundMode].forEach(el => {
+// تحديث تلقائي بدون أزرار
+[teaSelect, waterValue, waterUnit, sugarLevel, cupMl].forEach(el => {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
 });
