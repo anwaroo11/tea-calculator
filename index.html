@@ -4,21 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>حاسبة الشاي</title>
+
+  <!-- Lucide icons (outline) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    .actionBtn {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
-  color: #e9eefc;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.actionBtn:hover {
-  background: rgba(255,255,255,0.15);
-}
-
     :root { font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial; }
     body { margin: 0; background:#0b1220; color:#e9eefc; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 24px; }
@@ -71,10 +61,27 @@
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
     }
-    .muted { opacity: .75; font-size: 12px; margin-top: 4px; }
+    .muted { opacity: .75; font-size: 12px; margin-top: 4px; display:flex; align-items:center; gap:8px; }
     .muted2 { opacity: .75; font-size: 12px; margin-top: 6px; }
     .big { font-size: 18px; font-weight: 700; margin-top: 6px; }
+
     .note { margin-top: 10px; font-size: 12px; opacity:.80; }
+
+    /* action buttons */
+    .actions { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+    .actionBtn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: #e9eefc;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .actionBtn:hover { background: rgba(255,255,255,0.15); }
+
+    /* lucide icon sizing */
+    .muted svg { width:16px; height:16px; stroke-width:1.7; opacity:0.9; }
   </style>
 </head>
 
@@ -93,7 +100,7 @@
         <div>
           <label>كمية الماء (مل)</label>
           <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
-          <div class="muted">مثال: 500 أو 750 أو 1000</div>
+          <div class="muted2">مثال: 500 أو 750 أو 1000</div>
         </div>
 
         <div>
@@ -103,7 +110,7 @@
             <option value="heavy">ثقيل</option>
             <option value="nosugar">بدون سكر</option>
           </select>
-          <div class="muted" id="tasteHint"></div>
+          <div class="muted2" id="tasteHint"></div>
         </div>
       </div>
 
@@ -129,7 +136,7 @@ const TEAS = [
     id: "nahrain-op",
     teaType: "OP",
     brand: "شاي النهرين",
-    teaPerLiter:   { min: 12, max: 12 },     // إذا تبي الشاي يتغير مع المذاق: خلها مثل {min: 11, max: 13}
+    teaPerLiter:   { min: 12, max: 12 }, // مثال: إذا تبي يتغير مع المذاق: { min: 11, max: 13 }
     sugarPerLiter: { min: 50, max: 55 },
     steepMinutes:  { min: 20, max: 25 }
   },
@@ -165,6 +172,11 @@ function pickByTaste(range, taste){
   if (taste === "heavy") return range.max;
   return range.min; // مناسب + بدون سكر => الأقل
 }
+function tasteLabel(v){
+  if (v === "heavy") return "ثقيل";
+  if (v === "nosugar") return "بدون سكر";
+  return "مناسب";
+}
 
 /** ===== UI ===== */
 const teaSelect  = document.getElementById("teaSelect");
@@ -188,14 +200,7 @@ function getSelectedTea(){
   return TEAS.find(t => t.id === id) || TEAS[0];
 }
 
-function tasteLabel(v){
-  if (v === "heavy") return "ثقيل";
-  if (v === "nosugar") return "بدون سكر";
-  return "مناسب";
-}
-
-function render(){
-  function getResultText() {
+function getResultText(){
   const tea = getSelectedTea();
   const taste = tasteLabel(tasteSel.value);
 
@@ -211,6 +216,8 @@ function render(){
     sugarText = smartNumber(sugarPerLiter * liters) + " جم";
   }
 
+  const cups = Number(waterMlInp.value) / CUP_ML;
+
   return `
 شاي ${tea.brand} — ${tea.teaType}
 الماء: ${waterMlInp.value} مل
@@ -219,9 +226,49 @@ function render(){
 وزن الشاي: ${teaGrams} جم
 السكر: ${sugarText}
 مدة الخدرة: ${minutesText(tea.steepMinutes)}
+كم بيالة تقريباً: ${smartNumber(cups)}
 `.trim();
 }
 
+function bindActionButtons(){
+  const copyBtn = document.getElementById("copyBtn");
+  const waBtn = document.getElementById("waBtn");
+
+  if (copyBtn) {
+    copyBtn.onclick = async () => {
+      const text = getResultText();
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        // fallback (مضمون)
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+
+      copyBtn.textContent = "تم النسخ ✓";
+      setTimeout(() => copyBtn.textContent = "نسخ النتيجة", 1500);
+    };
+  }
+
+  if (waBtn) {
+    waBtn.onclick = () => {
+      const text = encodeURIComponent(getResultText());
+      if (!text) return;
+      // الأفضل للجوال (بدون بوب-اب)
+      window.location.href = `https://wa.me/?text=${text}`;
+    };
+  }
+}
+
+function render(){
   const tea = getSelectedTea();
   const liters = toLitersFromMl(waterMlInp.value);
 
@@ -242,46 +289,46 @@ function render(){
     const sugarPerLiterPicked = pickByTaste(tea.sugarPerLiter, taste);
     const sugarGrams = sugarPerLiterPicked * liters;
     sugarText = `${smartNumber(sugarGrams)} جم`;
+  } else {
+    sugarText = "بدون سكر";
   }
 
-  // تلميح يوضح أوزان هذا الشاي (لكل لتر)
   tasteHint.textContent =
     `لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiter.min)} جم • سكر ${smartNumber(tea.sugarPerLiter.min)} جم) — ثقيل (شاي ${smartNumber(tea.teaPerLiter.max)} جم • سكر ${smartNumber(tea.sugarPerLiter.max)} جم)`;
 
-  // البيالات (تقريباً) على افتراض 100 مل
+  // البيالات (تقريباً)
   const waterMl = Number(waterMlInp.value);
   const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
-  const cupsText = smartNumber(cups);
 
   output.innerHTML = `
     <div class="kpi">
-    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-  <button id="copyBtn" class="actionBtn">نسخ النتيجة</button>
-  <button id="waBtn" class="actionBtn">مشاركة واتساب</button>
-</div>
-
       <div class="box">
-        <div class="muted">وزن الشاي المطلوب</div>
+        <div class="muted"><i data-lucide="scale"></i> وزن الشاي المطلوب</div>
         <div class="big">${smartNumber(teaGrams)} جم</div>
         <div class="muted2">${tasteLabel(taste)} • لكل لتر: ${smartNumber(teaPerLiterPicked)} جم</div>
       </div>
 
       <div class="box">
-        <div class="muted">السكر</div>
+        <div class="muted"><i data-lucide="candy"></i> السكر</div>
         <div class="big">${sugarText}</div>
         <div class="muted2">${taste === "nosugar" ? "بدون سكر" : `لكل لتر: ${smartNumber(pickByTaste(tea.sugarPerLiter, taste))} جم`}</div>
       </div>
 
       <div class="box">
-        <div class="muted">مدة الخدرة</div>
+        <div class="muted"><i data-lucide="clock"></i> مدة الخدرة</div>
         <div class="big">${minutesText(tea.steepMinutes)}</div>
       </div>
 
       <div class="box">
-        <div class="muted">كم بيالة تكفي (تقريباً)</div>
-        <div class="big">${cupsText}</div>
+        <div class="muted"><i data-lucide="coffee"></i> كم بيالة تكفي (تقريباً)</div>
+        <div class="big">${smartNumber(cups)}</div>
         <div class="muted2">حجم البيالة الواحدة تقريبًا ١٠٠ مل</div>
       </div>
+    </div>
+
+    <div class="actions">
+      <button id="copyBtn" class="actionBtn">نسخ النتيجة</button>
+      <button id="waBtn" class="actionBtn">مشاركة واتساب</button>
     </div>
 
     <div class="note">
@@ -290,6 +337,12 @@ function render(){
       <b>الماء:</b> ${waterMlInp.value} مل
     </div>
   `;
+
+  // فعّل الأيقونات بعد إدخالها للـ DOM
+  if (window.lucide) lucide.createIcons();
+
+  // اربط أزرار النسخ والواتساب بعد كل render
+  bindActionButtons();
 }
 
 [teaSelect, waterMlInp, tasteSel].forEach(el => {
@@ -299,20 +352,6 @@ function render(){
 
 populateTeaSelect();
 render();
-  document.addEventListener("click", function(e){
-  if (e.target.id === "copyBtn") {
-    const text = getResultText();
-    navigator.clipboard.writeText(text);
-    e.target.textContent = "تم النسخ ✓";
-    setTimeout(() => e.target.textContent = "نسخ النتيجة", 1500);
-  }
-
-  if (e.target.id === "waBtn") {
-    const text = encodeURIComponent(getResultText());
-    window.open(`https://wa.me/?text=${text}`, "_blank");
-  }
-});
-
 </script>
 </body>
 </html>
