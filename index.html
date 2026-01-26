@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>حاسبة الشاي</title>
   <style>
-   /* توحيد شكل وأبعاد الحقول */
-select, input { box-sizing: border-box; height: 48px; }
-
-/* إزالة أزرار/أسهم input رقم (تخرب الشكل ببعض الأجهزة) */
-input[type=number] { appearance: textfield; -moz-appearance: textfield; }
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } 
     :root { font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial; }
     body { margin: 0; background:#0b1220; color:#e9eefc; }
     .wrap { max-width: 880px; margin: 0 auto; padding: 24px; }
@@ -36,7 +29,13 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
       color: #e9eefc;
       outline: none;
       font-size: 15px;
+      box-sizing: border-box;
+      height: 48px;
     }
+    input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
     .out {
       margin-top: 14px;
       background: rgba(0,0,0,0.22);
@@ -48,14 +47,10 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
     .kpi { display:grid; gap:10px; grid-template-columns: 1fr; }
     @media (min-width: 780px){ .kpi { grid-template-columns: 1fr 1fr 1fr; } }
     .box { padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);}
-    .muted {
-     opacity: .75;
-     font-size: 12px;
-     margin-top: 4px}
+    .muted { opacity: .75; font-size: 12px; margin-top: 4px; }
     .muted2 { opacity: .75; font-size: 12px; margin-top: 6px; }
     .big { font-size: 18px; font-weight: 700; margin-top: 6px; }
     .note { margin-top: 10px; font-size: 12px; opacity:.80; }
-    .footer { margin-top: 14px; font-size: 12px; opacity:.75; }
   </style>
 </head>
 
@@ -63,45 +58,38 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
   <div class="wrap">
     <div class="card">
       <h1>حاسبة الشاي ☕</h1>
-      <p class="sub">اختر البراند + نوع التصنيف، وحط كمية الماء… وتطلع لك الوزنية + السكر + كم بيالة تكفي + مدة الخدرة.</p>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك الوزنية + السكر + كم بيالة تكفي + مدة الخدرة.</p>
 
       <div class="grid">
         <div>
           <label>اختر الشاي</label>
           <select id="teaSelect"></select>
+          <div class="muted" id="teaHint"></div>
         </div>
 
         <div>
           <label>كمية الماء (مل)</label>
           <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
-          <div class="muted" style="margin-top:6px">مثال: 500 أو 750 أو 1000</div>
+          <div class="muted">مثال: 500 أو 750 أو 1000</div>
         </div>
 
         <div>
           <label>السكر</label>
-          <select id="sugarLevel">
-            <option value="light">خفيف</option>
-            <option value="medium" selected>وسط</option>
-            <option value="heavy">ثقيل</option>
-            <option value="none">بدون سكر</option>
-          </select>
-          <div class="muted" style="margin-top:6px">خفيف = 50 جم/لتر • وسط = 52.5 • ثقيل = 55</div>
+          <select id="sugarLevel"></select>
+          <div class="muted" id="sugarHint"></div>
         </div>
       </div>
 
       <div class="out" id="output" aria-live="polite"></div>
-
-      <div class="footer">
-        لإضافة شاي جديد: عدّل قسم <b>DATA</b> داخل الملف.
-      </div>
     </div>
   </div>
 
 <script>
 /** =========================
- *  DATA (منتجاتك)
+ *  DATA
  *  - gramsPerLiter: جرام شاي لكل 1 لتر
- *  - steepMinutes: مدى مدة الخدرة بالدقائق
+ *  - steepMinutes: مدة الخدرة (مدى)
+ *  - sugarPerLiter: مستويات السكر لكل شاي (لكل 1 لتر)
  * ========================= */
 const TEAS = [
   {
@@ -109,34 +97,18 @@ const TEAS = [
     teaType: "OP",
     brand: "شاي النهرين",
     gramsPerLiter: 12,
-    steepMinutes: { min: 20, max: 25 }
-    sugarPerLiter: { light: 50, medium: 55}
+    steepMinutes: { min: 20, max: 25 },
+    sugarPerLiter: { light: 50, medium: 52.5, heavy: 55 } // <-- عدّلها حسب وزنيتك
   },
   {
     id: "naif-op1",
     teaType: "OP1",
     brand: "شاي نايف",
     gramsPerLiter: 14,
-    steepMinutes: { min: 30, max: 35 }
-    sugarPerLiter: { light: 50, medium: 55}
-  }
-   },
-  {
-    id: "abu-jabal-op1",
-    teaType: "op",
-    brand: "شاي ابوجبل",
-    gramsPerLiter: 12,
-    steepMinutes: { min: 30 }
-    sugarPerLiter: { light: 53, medium: 60}
+    steepMinutes: { min: 30, max: 35 },
+    sugarPerLiter: { light: 48, medium: 52.5, heavy: 56 } // <-- مثال، عدّلها
   }
 ];
-
-// مستويات السكر (جم لكل لتر)
-const SUGAR_PER_LITER = {
-  light: 50,
-  medium: 52.5,
-  heavy: 55
-};
 
 // افتراض البيالة
 const CUP_ML = 100;
@@ -158,13 +130,15 @@ const teaSelect  = document.getElementById("teaSelect");
 const waterMlInp = document.getElementById("waterMl");
 const sugarLevel = document.getElementById("sugarLevel");
 const output     = document.getElementById("output");
+const teaHint    = document.getElementById("teaHint");
+const sugarHint  = document.getElementById("sugarHint");
 
-function populateSelect(){
+function populateTeaSelect(){
   teaSelect.innerHTML = "";
   TEAS.forEach(t => {
     const opt = document.createElement("option");
     opt.value = t.id;
-    opt.textContent = `${t.brand} — ${t.teaType}`; // البراند أول ثم التصنيف
+    opt.textContent = `${t.brand} — ${t.teaType}`;
     teaSelect.appendChild(opt);
   });
 }
@@ -172,6 +146,30 @@ function populateSelect(){
 function getSelectedTea(){
   const id = teaSelect.value;
   return TEAS.find(t => t.id === id) || TEAS[0];
+}
+
+function populateSugarOptionsForTea(tea){
+  sugarLevel.innerHTML = "";
+
+  const options = [
+    { value: "light",  label: "خفيف" },
+    { value: "medium", label: "وسط" },
+    { value: "heavy",  label: "ثقيل" },
+    { value: "none",   label: "بدون سكر" }
+  ];
+
+  options.forEach(o => {
+    const opt = document.createElement("option");
+    opt.value = o.value;
+    opt.textContent = o.label;
+    sugarLevel.appendChild(opt);
+  });
+
+  // الافتراضي: وسط
+  sugarLevel.value = "medium";
+
+  const s = tea.sugarPerLiter;
+  sugarHint.textContent = `سكر هذا الشاي لكل 1 لتر: خفيف ${smartNumber(s.light)} • وسط ${smartNumber(s.medium)} • ثقيل ${smartNumber(s.heavy)} (جم)`;
 }
 
 function render(){
@@ -183,13 +181,15 @@ function render(){
     return;
   }
 
+  teaHint.textContent = `مدة الخدرة: ${tea.steepMinutes.min} – ${tea.steepMinutes.max} دقيقة`;
+
   // الشاي
   const teaGrams = tea.gramsPerLiter * liters;
 
-  // السكر
+  // السكر حسب الشاي
   let sugarText = "بدون";
   if (sugarLevel.value !== "none") {
-    const sugarPerLiter = SUGAR_PER_LITER[sugarLevel.value];
+    const sugarPerLiter = tea.sugarPerLiter[sugarLevel.value];
     const sugarGrams = sugarPerLiter * liters;
     sugarText = `${smartNumber(sugarGrams)} جم`;
   }
@@ -218,20 +218,26 @@ function render(){
 
     <div class="note">
       <b>المنتج:</b> ${tea.brand} — ${tea.teaType}<br/>
-      <b>مدة الخدرة:</b> ${tea.steepMinutes.min} – ${tea.steepMinutes.max} دقيقة<br/>
       <b>الماء:</b> ${waterMlInp.value} مل
     </div>
   `;
 }
 
-// تحديث تلقائي بدون أزرار
+function onTeaChange(){
+  const tea = getSelectedTea();
+  populateSugarOptionsForTea(tea);
+  render();
+}
+
 [teaSelect, waterMlInp, sugarLevel].forEach(el => {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
 });
 
-populateSelect();
-render();
+teaSelect.addEventListener("change", onTeaChange);
+
+populateTeaSelect();
+onTeaChange();
 </script>
 </body>
 </html>
