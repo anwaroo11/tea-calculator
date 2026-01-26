@@ -30,8 +30,6 @@
       outline: none;
       font-size: 15px;
     }
-    .row { display:flex; gap:10px; align-items:center; }
-    .row > * { flex:1; }
     .out {
       margin-top: 14px;
       background: rgba(0,0,0,0.22);
@@ -44,6 +42,7 @@
     @media (min-width: 780px){ .kpi { grid-template-columns: 1fr 1fr 1fr; } }
     .box { padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);}
     .muted { opacity: .85; font-size: 13px; }
+    .muted2 { opacity: .75; font-size: 12px; margin-top: 6px; }
     .big { font-size: 18px; font-weight: 700; margin-top: 6px; }
     .note { margin-top: 10px; font-size: 12px; opacity:.80; }
     .footer { margin-top: 14px; font-size: 12px; opacity:.75; }
@@ -63,15 +62,9 @@
         </div>
 
         <div>
-          <label>كمية الماء</label>
-          <div class="row">
-            <input id="waterValue" type="number" inputmode="decimal" min="1" value="1000" />
-            <select id="waterUnit">
-              <option value="ml">مل</option>
-              <option value="l">لتر</option>
-            </select>
-          </div>
-          <div class="muted" style="margin-top:6px">مثال: 500 مل أو 1 لتر</div>
+          <label>كمية الماء (مل)</label>
+          <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
+          <div class="muted" style="margin-top:6px">مثال: 500 أو 750 أو 1000</div>
         </div>
 
         <div>
@@ -84,18 +77,12 @@
           </select>
           <div class="muted" style="margin-top:6px">خفيف = 50 جم/لتر • وسط = 52.5 • ثقيل = 55</div>
         </div>
-
-        <div>
-          <label>حجم البيالة (مل)</label>
-          <input id="cupMl" type="number" inputmode="decimal" min="10" value="100" />
-          <div class="muted" style="margin-top:6px">الافتراضي 100 مل. غيّرها إذا بيالاتكم أكبر/أصغر.</div>
-        </div>
       </div>
 
       <div class="out" id="output" aria-live="polite"></div>
 
       <div class="footer">
-        لإضافة شاي جديد: عدّل قسم <b>DATA</b> داخل الملف (تحت).
+        لإضافة شاي جديد: عدّل قسم <b>DATA</b> داخل الملف.
       </div>
     </div>
   </div>
@@ -130,24 +117,25 @@ const SUGAR_PER_LITER = {
   heavy: 55
 };
 
+// افتراض البيالة
+const CUP_ML = 100;
+
 /** ===== Helpers ===== */
 function smartNumber(n){
   if (!Number.isFinite(n)) return "-";
   const isInt = Math.abs(n - Math.round(n)) < 1e-9;
   return isInt ? String(Math.round(n)) : n.toFixed(1);
 }
-function toLiters(value, unit){
-  const v = Number(value);
+function toLitersFromMl(ml){
+  const v = Number(ml);
   if (!Number.isFinite(v) || v <= 0) return NaN;
-  return unit === "l" ? v : (v / 1000);
+  return v / 1000;
 }
 
 /** ===== UI ===== */
-const teaSelect = document.getElementById("teaSelect");
-const waterValue = document.getElementById("waterValue");
-const waterUnit  = document.getElementById("waterUnit");
+const teaSelect  = document.getElementById("teaSelect");
+const waterMlInp = document.getElementById("waterMl");
 const sugarLevel = document.getElementById("sugarLevel");
-const cupMl      = document.getElementById("cupMl");
 const output     = document.getElementById("output");
 
 function populateSelect(){
@@ -155,8 +143,7 @@ function populateSelect(){
   TEAS.forEach(t => {
     const opt = document.createElement("option");
     opt.value = t.id;
-    // المطلوب: البراند أول ثم نوع التصنيف
-    opt.textContent = `${t.brand} — ${t.teaType}`;
+    opt.textContent = `${t.brand} — ${t.teaType}`; // البراند أول ثم التصنيف
     teaSelect.appendChild(opt);
   });
 }
@@ -168,10 +155,10 @@ function getSelectedTea(){
 
 function render(){
   const tea = getSelectedTea();
-  const liters = toLiters(waterValue.value, waterUnit.value);
+  const liters = toLitersFromMl(waterMlInp.value);
 
   if (!Number.isFinite(liters)) {
-    output.innerHTML = `⚠️ دخل كمية ماء صحيحة.`;
+    output.innerHTML = `⚠️ دخل كمية ماء صحيحة بالمل.`;
     return;
   }
 
@@ -186,14 +173,10 @@ function render(){
     sugarText = `${smartNumber(sugarGrams)} جم`;
   }
 
-  // البيالات
-  const cup = Number(cupMl.value);
-  const waterMl = liters * 1000;
-  let cupsText = "-";
-  if (Number.isFinite(cup) && cup > 0) {
-    const cups = waterMl / cup;
-    cupsText = smartNumber(cups);
-  }
+  // البيالات (تقريباً) على افتراض 100 مل
+  const waterMl = Number(waterMlInp.value);
+  const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
+  const cupsText = smartNumber(cups);
 
   output.innerHTML = `
     <div class="kpi">
@@ -206,21 +189,22 @@ function render(){
         <div class="big">${sugarText}</div>
       </div>
       <div class="box">
-        <div class="muted">كم بيالة تكفي</div>
+        <div class="muted">كم بيالة تكفي (تقريباً)</div>
         <div class="big">${cupsText}</div>
+        <div class="muted2">حجم البيالة الواحدة تقريبًا ١٠٠ مل</div>
       </div>
     </div>
 
     <div class="note">
       <b>المنتج:</b> ${tea.brand} — ${tea.teaType}<br/>
       <b>مدة الخدرة:</b> ${tea.steepMinutes.min} – ${tea.steepMinutes.max} دقيقة<br/>
-      <b>الماء:</b> ${waterValue.value} ${waterUnit.value === "l" ? "لتر" : "مل"} (${smartNumber(liters)} لتر)
+      <b>الماء:</b> ${waterMlInp.value} مل
     </div>
   `;
 }
 
 // تحديث تلقائي بدون أزرار
-[teaSelect, waterValue, waterUnit, sugarLevel, cupMl].forEach(el => {
+[teaSelect, waterMlInp, sugarLevel].forEach(el => {
   el.addEventListener("input", render);
   el.addEventListener("change", render);
 });
