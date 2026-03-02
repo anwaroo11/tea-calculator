@@ -10,308 +10,377 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    :root { 
+    /* ========================================
+       COLOR PALETTE: Warm Beige + Cocoa + Dark Slate
+       ======================================== */
+    :root {
+      --bg-primary: #faf7f2;
+      --bg-secondary: #f3ede5;
+      --card-bg: #ffffff;
+      --card-shadow: 0 2px 12px rgba(60, 45, 32, 0.08);
+      --card-shadow-hover: 0 4px 20px rgba(60, 45, 32, 0.12);
+      --border-light: #ede5dc;
+      --border-medium: #d9ccbf;
+      --text-primary: #3c2d20;
+      --text-secondary: #6b5b4f;
+      --text-muted: #9d8b7d;
+      --accent-tea: #7d6e4e;
+      --accent-tea-light: #a89766;
+      --input-bg: #fefdfb;
+      --input-border: #e8dfd5;
+      --input-focus: #d9a574;
+      --error-bg: #ffe8e0;
+      --error-text: #a83d2f;
+      --success-bg: #e8f3e8;
+      --success-text: #2d6e3d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
       font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
-      --primary-bg: #0b1220;
-      --card-bg: rgba(255,255,255,0.06);
-      --card-border: rgba(255,255,255,0.10);
-      --text-primary: #e9eefc;
-      --text-secondary: rgba(233,238,252,0.75);
-      --input-bg: rgba(0,0,0,0.25);
-      --input-border: rgba(255,255,255,0.16);
-      --error-bg: rgba(255,80,80,.10);
-      --error-border: rgba(255,80,80,.35);
     }
 
-    * { box-sizing: border-box; }
-    
-    body { 
-      margin: 0; 
-      background: var(--primary-bg); 
+    body {
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
       color: var(--text-primary);
-      padding: 16px;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    .wrap { 
-      max-width: 1400px; 
+    .wrap {
+      max-width: 900px;
       margin: 0 auto;
     }
 
+    /* Header */
     .header {
-      margin-bottom: 24px;
       text-align: center;
+      margin-bottom: 32px;
+      padding: 0 16px;
     }
 
-    .header h1 {
-      margin: 0 0 6px;
-      font-size: 24px;
-      font-weight: 600;
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
     }
 
-    .header .sub {
-      margin: 0;
-      opacity: 0.75;
-      font-size: 14px;
+    p.sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      opacity: 0.95;
     }
 
-    .layout {
+    /* Main Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--card-shadow);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    /* Grid Layout for Inputs */
+    .grid {
       display: grid;
-      gap: 20px;
+      gap: 16px;
       grid-template-columns: 1fr;
+      margin-bottom: 24px;
     }
 
-    @media (min-width: 1024px) {
-      .layout {
+    @media (min-width: 640px) {
+      .grid {
         grid-template-columns: 1fr 1fr;
       }
     }
 
-    .panel {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 24px;
-      backdrop-filter: blur(8px);
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 14px;
+      }
     }
 
-    .panel-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 0 0 18px;
-      opacity: 0.95;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .panel-title svg {
-      width: 18px;
-      height: 18px;
-      stroke-width: 1.8;
-    }
-
+    /* Input Group */
     .input-group {
-      margin-bottom: 16px;
-    }
-
-    .input-group:last-child {
-      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     label {
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
       opacity: 0.9;
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
     }
 
-    select, input {
+    select,
+    input {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
-      border: 1px solid var(--input-border);
+      border: 1.5px solid var(--input-border);
       background: var(--input-bg);
       color: var(--text-primary);
-      outline: none;
       font-size: 15px;
-      height: 48px;
-      transition: border-color 0.2s, background-color 0.2s;
+      height: 44px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
     }
 
-    select:focus, input:focus {
-      border-color: rgba(255,255,255,0.25);
-      background: rgba(0,0,0,0.35);
+    select:hover,
+    input:hover {
+      border-color: var(--accent-tea-light);
+      background: #fffbf7;
     }
 
-    input[type=number] { 
-      appearance: textfield; 
-      -moz-appearance: textfield; 
+    select:focus,
+    input:focus {
+      border-color: var(--input-focus);
+      background: #fffbf7;
+      box-shadow: 0 0 0 3px rgba(217, 165, 116, 0.1);
     }
 
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
+    input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
     }
 
-    /* 🔧 Fix: Dark text on light dropdown for desktop readability */
-    select option { 
-      color: #1a1a1a; 
-      background: #f5f5f5;
-      padding: 4px 8px;
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* 🔧 Select Dropdown Options Fix */
+    select option {
+      color: var(--text-primary);
+      background: var(--card-bg);
+      padding: 8px 12px;
     }
 
     select option:checked {
-      background: #e0e0e0;
-      color: #000;
+      background: linear-gradient(var(--input-focus), var(--input-focus));
+      color: white;
     }
 
-    input::placeholder { 
-      opacity: 0.6; 
-      color: var(--text-secondary);
-    }
-
-    .helper-text {
-      font-size: 12px;
+    input::placeholder {
+      color: var(--text-muted);
       opacity: 0.7;
-      margin-top: 6px;
-      line-height: 1.4;
     }
 
-    /* Results Panel */
-    .kpi-grid {
+    /* Helper Text */
+    .helper-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      line-height: 1.4;
+      opacity: 0.85;
+    }
+
+    /* Results Output Section */
+    .out {
+      margin-top: 28px;
+      padding: 0;
+    }
+
+    /* KPI Grid */
+    .kpi {
       display: grid;
       gap: 12px;
       grid-template-columns: 1fr;
+      margin-bottom: 16px;
     }
 
-    @media (min-width: 768px) {
-      .kpi-grid {
+    @media (min-width: 640px) {
+      .kpi {
         grid-template-columns: 1fr 1fr;
       }
     }
 
-    .kpi-box {
+    @media (min-width: 900px) {
+      .kpi {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+    }
+
+    /* KPI Box */
+    .box {
       padding: 16px;
       border-radius: 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--card-border);
-      transition: background-color 0.2s;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, #f8f2eb 100%);
+      border: 1px solid var(--border-light);
+      transition: all 0.2s ease;
     }
 
-    .kpi-box:hover {
-      background: rgba(255,255,255,0.08);
+    .box:hover {
+      background: linear-gradient(135deg, #f0e8e0 0%, #ede5dc 100%);
+      border-color: var(--accent-tea-light);
     }
 
-    .kpi-label {
+    .box .muted {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      opacity: 0.75;
-      margin-bottom: 8px;
-    }
-
-    .kpi-label svg {
-      width: 16px;
-      height: 16px;
-      stroke-width: 1.7;
-    }
-
-    .kpi-value {
-      font-size: 22px;
-      font-weight: 700;
+      gap: 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--text-secondary);
       margin-bottom: 6px;
-      line-height: 1.2;
-    }
-
-    .kpi-note {
-      font-size: 12px;
-      opacity: 0.65;
-      line-height: 1.3;
-    }
-
-    .summary-box {
-      margin-top: 16px;
-      padding: 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      font-size: 13px;
-      line-height: 1.6;
       opacity: 0.85;
     }
 
-    .summary-box b {
-      font-weight: 600;
-      opacity: 0.95;
+    .box .muted svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 1.8;
+      color: var(--accent-tea);
     }
 
-    .action-buttons {
+    .box .big {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-tea);
+      margin: 6px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .box .muted2 {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      line-height: 1.4;
+      opacity: 0.8;
+    }
+
+    /* Note/Summary Box */
+    .note {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, #f8f2eb 100%);
+      border: 1px solid var(--border-light);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .note b {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Action Buttons */
+    .actions {
       display: flex;
       gap: 10px;
       margin-top: 16px;
       flex-wrap: wrap;
     }
 
-    .action-btn {
+    .actionBtn {
       flex: 1;
       min-width: 140px;
-      padding: 12px 16px;
+      padding: 11px 16px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.08);
-      color: var(--text-primary);
+      border: 1.5px solid var(--border-medium);
+      background: linear-gradient(135deg, var(--accent-tea) 0%, #8b7c5a 100%);
+      color: white;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
 
-    .action-btn:hover {
-      background: rgba(255,255,255,0.15);
-      border-color: rgba(255,255,255,0.3);
+    .actionBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(125, 110, 78, 0.25);
+      border-color: var(--accent-tea);
     }
 
-    .action-btn:active {
-      transform: scale(0.98);
+    .actionBtn:active {
+      transform: translateY(0);
     }
 
-    .action-btn svg {
+    .actionBtn svg {
       width: 14px;
       height: 14px;
       stroke-width: 2;
     }
 
-    /* Error State */
+    /* Error Panel */
     .error-panel {
       padding: 14px;
       border-radius: 12px;
-      border: 1px solid var(--error-border);
+      border: 1.5px solid #d9a574;
       background: var(--error-bg);
-      color: #ff9999;
-    }
-
-    .error-panel .error-title {
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .error-panel .error-detail {
-      font-size: 12px;
-      opacity: 0.8;
-      word-break: break-word;
-    }
-
-    /* Loading / Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 24px;
-      opacity: 0.6;
+      color: var(--error-text);
       font-size: 14px;
+      line-height: 1.5;
     }
 
-    .empty-state svg {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 12px;
-      opacity: 0.4;
+    .error-panel div {
+      display: block;
     }
 
-    @media (max-width: 1023px) {
-      .panel {
-        padding: 18px;
+    /* Type Wrap (conditional visibility) */
+    #typeWrap {
+      display: none;
+    }
+
+    /* Utility: Lucide icon sizing */
+    .muted svg,
+    .actionBtn svg {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 26px;
       }
 
-      .layout {
-        gap: 16px;
+      .card {
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      label {
+        font-size: 11px;
+      }
+
+      .box .big {
+        font-size: 20px;
+      }
+
+      .actionBtn {
+        padding: 10px 12px;
+        font-size: 12px;
       }
     }
+
   </style>
 </head>
 
@@ -320,59 +389,43 @@
     <!-- Header -->
     <div class="header">
       <h1>☕ حاسبة الشاي</h1>
-      <p class="sub">احسب وزن الشاي والسكر ومدة الخدرة بناءً على تفضيلاتك</p>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة + كم بيالة تكفي.</p>
     </div>
 
-    <!-- Two-Column Layout: Inputs | Results -->
-    <div class="layout">
-      <!-- LEFT PANEL: Inputs -->
-      <div class="panel">
-        <div class="panel-title">
-          <i data-lucide="sliders-horizontal"></i>
-          المدخلات
-        </div>
-
+    <!-- Main Card -->
+    <div class="card">
+      <!-- Inputs Grid -->
+      <div class="grid">
         <!-- Search Input -->
         <div class="input-group">
-          <label>🔍 ابحث عن الشاي</label>
-          <input 
-            id="teaSearch" 
-            type="text" 
-            placeholder="المنيس • نهرين • OP1 • BOP..." 
-          />
-          <div class="helper-text">اكتب اسم البراند أو نوع الورق للفلترة</div>
+          <label>بحث عن الشاي</label>
+          <input id="teaSearch" type="text" placeholder="اكتب اسم الشاي أو نوع الورق..." />
+          <div class="helper-text">مثال: المنيس — نهرين — OP1</div>
         </div>
 
         <!-- Main Tea Select -->
         <div class="input-group">
           <label>اختر الشاي</label>
           <select id="teaSelect"></select>
-          <div class="helper-text" id="teaHint"></div>
         </div>
 
-        <!-- Tea Type (appears only for branded teas with multiple types) -->
-        <div id="typeWrap" style="display:none;" class="input-group">
+        <!-- Type Select (conditional) -->
+        <div id="typeWrap" class="input-group">
           <label>نوع الورق</label>
           <select id="typeSelect"></select>
-          <div class="helper-text">يظهر فقط للبراندات التي لها عدة أنواع</div>
+          <div class="helper-text">يظهر فقط للبراند اللي له أكثر من نوع</div>
         </div>
 
         <!-- Water Input -->
         <div class="input-group">
-          <label>💧 كمية الماء (مل)</label>
-          <input 
-            id="waterMl" 
-            type="number" 
-            inputmode="decimal" 
-            min="1" 
-            value="1000" 
-          />
-          <div class="helper-text">أمثلة: 500 • 750 • 1000 • 1500 مل</div>
+          <label>كمية الماء (مل)</label>
+          <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
+          <div class="helper-text">مثال: 500 أو 750 أو 1000</div>
         </div>
 
         <!-- Taste Select -->
         <div class="input-group">
-          <label>👅 المذاق المفضل</label>
+          <label>المذاق</label>
           <select id="taste">
             <option value="normal" selected>مناسب</option>
             <option value="heavy">ثقيل</option>
@@ -382,46 +435,19 @@
         </div>
       </div>
 
-      <!-- RIGHT PANEL: Results -->
-      <div class="panel">
-        <div class="panel-title">
-          <i data-lucide="check-circle-2"></i>
-          النتيجة
-        </div>
-
-        <div id="resultsContainer" aria-live="polite" aria-atomic="true">
-          <div class="empty-state">
-            <i data-lucide="loader"></i>
-            جاري التحميل...
-          </div>
-        </div>
-      </div>
+      <!-- Results Section -->
+      <div class="out" id="output" aria-live="polite"></div>
     </div>
   </div>
 
 <script>
 /* =========================
    ✅ وين تضيف الشاي؟
-   
-   1️⃣ شاي عادي (بدون تصنيفات):
-      أضفه في SIMPLE_TEAS مع:
-      - id: معرّف فريد
-      - brand: اسم الشاي
-      - teaType: نوع الورق (OP, OP1, BOP, إلخ)
-      - teaPerLiter: {min, max} وزن الشاي لكل لتر
-      - sugarPerLiter: {min, max} السكر لكل لتر
-      - steepMinutes: {min, max} مدة الخدرة بالدقائق
+   1) شاي عادي (بدون تصنيفات):
+      - ضيفه داخل SIMPLE_TEAS تحت
 
-   2️⃣ شاي بتصنيفات (مثل المنيس):
-      أضفه في BRANDED_TEAS مع:
-      - brandId: معرّف البراند الفريد
-      - brand: اسم البراند
-      - items: مصفوفة الأنواع (OP1, BOP1, إلخ)
-        - لكل نوع: id, teaType, وإما:
-          * teaPerLiterByTaste: {normal, heavy, nosugar}
-          * أو teaPerLiter: {min, max}
-        - sugarPerLiter: {min, max}
-        - steepMinutes: {min, max}
+   2) شاي بتصنيفات (مثل المنيس OP1/BOP1...):
+      - ضيفه داخل BRANDED_TEAS
    ========================= */
 
 /* ---------- (A) الشاي العادي (بدون تصنيفات إضافية) ---------- */
@@ -442,7 +468,6 @@ const SIMPLE_TEAS = [
     sugarPerLiter: { min: 50, max: 55 },
     steepMinutes:  { min: 30, max: 35 }
   }
-  // 👇 أضف شايك العادي هنا (انسخ قالب النهرين وعدّل)
 ];
 
 /* ---------- (B) شاي بتصنيفات (البراند الواحد له عدة أنواع) ---------- */
@@ -454,87 +479,63 @@ const BRANDED_TEAS = [
       {
         id: "munais-op1",
         teaType: "OP1",
-        // ✅ تعريف دقيق: لكل مذاق قيمة مختلفة من الشاي
+        // ✅ حسب طلبك (لكل 1 لتر)
         teaPerLiterByTaste: { normal: 12.5, heavy: 13.5, nosugar: 11.5 },
+        // السكر: عدّلها إذا عندك قيم مختلفة للمنيس
         sugarPerLiter: { min: 50, max: 55 },
+        // الخدرة 25-30
         steepMinutes: { min: 25, max: 30 }
-      },
-      {
-        id: "munais-bop1",
-        teaType: "BOP1",
-        teaPerLiterByTaste: { normal: 13, heavy: 14, nosugar: 12 },
-        sugarPerLiter: { min: 50, max: 55 },
-        steepMinutes: { min: 25, max: 30 }
-      },
-      {
-        id: "munais-fbop1",
-        teaType: "FBOP1",
-        teaPerLiterByTaste: { normal: 14, heavy: 15, nosugar: 13 },
-        sugarPerLiter: { min: 50, max: 55 },
-        steepMinutes: { min: 20, max: 25 }
       }
     ]
   }
-  // 👇 أضف براندك بتصنيفات متعددة هنا (انسخ قالب المنيس وعدّل)
 ];
 
-/* افتراض حجم البيالة */
+/* افتراض البيالة */
 const CUP_ML = 100;
 
-/* ===== Helper Functions ===== */
-function smartNumber(n) {
+/* ===== Helpers ===== */
+function smartNumber(n){
   if (!Number.isFinite(n)) return "-";
   const isInt = Math.abs(n - Math.round(n)) < 1e-9;
   return isInt ? String(Math.round(n)) : n.toFixed(1);
 }
-
-function toLitersFromMl(ml) {
+function toLitersFromMl(ml){
   const v = Number(ml);
   if (!Number.isFinite(v) || v <= 0) return NaN;
   return v / 1000;
 }
-
-function minutesText(r) {
+function minutesText(r){
   if (r.min === r.max) return `${r.min} دقيقة`;
   return `${r.min} – ${r.max} دقيقة`;
 }
-
-function pickRangeByTaste(range, taste) {
+function pickRangeByTaste(range, taste){
   if (taste === "heavy") return range.max;
   return range.min; // مناسب + بدون سكر => الأقل
 }
-
-function tasteLabel(v) {
+function tasteLabel(v){
   if (v === "heavy") return "ثقيل";
   if (v === "nosugar") return "بدون سكر";
   return "مناسب";
 }
 
-function tasteEmoji(v) {
-  if (v === "heavy") return "🔥";
-  if (v === "nosugar") return "☕";
-  return "☕";
-}
+/* ===== UI References ===== */
+const teaSearch  = document.getElementById("teaSearch");
+const teaSelect  = document.getElementById("teaSelect");
+const typeWrap   = document.getElementById("typeWrap");
+const typeSelect = document.getElementById("typeSelect");
+const waterMlInp = document.getElementById("waterMl");
+const tasteSel   = document.getElementById("taste");
+const tasteHint  = document.getElementById("tasteHint");
+const output     = document.getElementById("output");
 
-/* ===== DOM References ===== */
-const teaSearch        = document.getElementById("teaSearch");
-const teaSelect        = document.getElementById("teaSelect");
-const teaHint          = document.getElementById("teaHint");
-const typeWrap         = document.getElementById("typeWrap");
-const typeSelect       = document.getElementById("typeSelect");
-const waterMlInp       = document.getElementById("waterMl");
-const tasteSel         = document.getElementById("taste");
-const tasteHint        = document.getElementById("tasteHint");
-const resultsContainer = document.getElementById("resultsContainer");
-
-/* ===== Populate Main Tea Select (with search filtering) ===== */
+/* تعبئة القائمة الرئيسية (مع فلترة البحث) */
 function populateMainSelect(filterText = "") {
   const q = (filterText || "").trim().toLowerCase();
   const current = teaSelect.value;
 
   teaSelect.innerHTML = "";
 
-  // SIMPLE_TEAS: individual entries
+  // الشاي العادي
   SIMPLE_TEAS.forEach(t => {
     const label = `${t.brand} — ${t.teaType}`.toLowerCase();
     if (q && !label.includes(q)) return;
@@ -545,7 +546,7 @@ function populateMainSelect(filterText = "") {
     teaSelect.appendChild(opt);
   });
 
-  // BRANDED_TEAS: brand entries (with optional type filter)
+  // البراندات اللي لها تصنيفات (مثل المنيس)
   BRANDED_TEAS.forEach(b => {
     const brandLabel = `${b.brand}`.toLowerCase();
     const typesLabel = b.items.map(x => x.teaType).join(" ").toLowerCase();
@@ -558,7 +559,7 @@ function populateMainSelect(filterText = "") {
     teaSelect.appendChild(opt);
   });
 
-  // Restore previous selection if it still exists
+  // حاول ترجع نفس الاختيار السابق إذا ما زال موجود
   const stillExists = Array.from(teaSelect.options).some(o => o.value === current);
   if (stillExists) {
     teaSelect.value = current;
@@ -567,12 +568,11 @@ function populateMainSelect(filterText = "") {
   }
 }
 
-/* ===== Get Selected Tea Configuration ===== */
-function getSelectedTeaObject() {
+function getSelectedTeaObject(){
   const val = teaSelect.value || "";
   const taste = tasteSel.value;
 
-  // SIMPLE TEA
+  // شاي عادي
   if (val.startsWith("simple:")) {
     const id = val.replace("simple:", "");
     const tea = SIMPLE_TEAS.find(x => x.id === id) || SIMPLE_TEAS[0];
@@ -580,26 +580,24 @@ function getSelectedTeaObject() {
     typeWrap.style.display = "none";
 
     const teaPerLiterPicked = pickRangeByTaste(tea.teaPerLiter, taste);
-    const sugarPerLiterPicked = (taste === "nosugar") ? 0 : pickRangeByTaste(tea.sugarPerLiter, taste);
-
     return {
       brandLabel: tea.brand,
       teaType: tea.teaType,
       teaPerLiterPicked,
-      sugarPerLiterPicked,
+      sugarPerLiterPicked: (taste === "nosugar") ? 0 : pickRangeByTaste(tea.sugarPerLiter, taste),
       steepMinutes: tea.steepMinutes,
-      hintText: `لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiter.min)}جم • سكر ${smartNumber(tea.sugarPerLiter.min)}جم) — ثقيل (شاي ${smartNumber(tea.teaPerLiter.max)}جم • سكر ${smartNumber(tea.sugarPerLiter.max)}جم)`
+      hintText: `لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiter.min)} • سكر ${smartNumber(tea.sugarPerLiter.min)}) — ثقيل (شاي ${smartNumber(tea.teaPerLiter.max)} • سكر ${smartNumber(tea.sugarPerLiter.max)})`
     };
   }
 
-  // BRANDED TEA WITH TYPES
+  // براند بتصنيفات
   if (val.startsWith("brand:")) {
     const brandId = val.replace("brand:", "");
     const brand = BRANDED_TEAS.find(b => b.brandId === brandId) || BRANDED_TEAS[0];
 
     typeWrap.style.display = "block";
 
-    // Rebuild type dropdown if brand changed or it's empty
+    // عبي الأنواع إذا فاضية أو لو تغير البراند
     const existingIds = Array.from(typeSelect.options).map(o => o.value);
     const shouldRebuild = existingIds.length !== brand.items.length ||
       (existingIds[0] && !brand.items.some(it => it.id === existingIds[0]));
@@ -617,20 +615,15 @@ function getSelectedTeaObject() {
 
     const selectedItem = brand.items.find(it => it.id === typeSelect.value) || brand.items[0];
 
-    // Determine tea weight: if teaPerLiterByTaste exists, use exact mapping; else use range
     const teaPerLiterPicked = selectedItem.teaPerLiterByTaste
       ? Number(selectedItem.teaPerLiterByTaste[taste])
       : pickRangeByTaste(selectedItem.teaPerLiter, taste);
 
     const sugarPerLiterPicked = (taste === "nosugar") ? 0 : pickRangeByTaste(selectedItem.sugarPerLiter, taste);
 
-    // Build hint text
-    let hintText = "";
-    if (selectedItem.teaPerLiterByTaste) {
-      hintText = `لكل 1 لتر: مناسب (${smartNumber(selectedItem.teaPerLiterByTaste.normal)}جم) — ثقيل (${smartNumber(selectedItem.teaPerLiterByTaste.heavy)}جم) — بدون سكر (${smartNumber(selectedItem.teaPerLiterByTaste.nosugar)}جم)`;
-    } else if (selectedItem.teaPerLiter) {
-      hintText = `لكل 1 لتر: مناسب (${smartNumber(selectedItem.teaPerLiter.min)}جم) — ثقيل (${smartNumber(selectedItem.teaPerLiter.max)}جم)`;
-    }
+    const hint = selectedItem.teaPerLiterByTaste
+      ? `لكل 1 لتر: مناسب (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.normal)} • سكر ${smartNumber(selectedItem.sugarPerLiter.min)}) — ثقيل (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.heavy)} • سكر ${smartNumber(selectedItem.sugarPerLiter.max)}) — بدون سكر (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.nosugar)} • سكر 0)`
+      : `لكل 1 لتر: مناسب (شاي ${smartNumber(selectedItem.teaPerLiter.min)} • سكر ${smartNumber(selectedItem.sugarPerLiter.min)}) — ثقيل (شاي ${smartNumber(selectedItem.teaPerLiter.max)} • سكر ${smartNumber(selectedItem.sugarPerLiter.max)})`;
 
     return {
       brandLabel: brand.brand,
@@ -638,11 +631,11 @@ function getSelectedTeaObject() {
       teaPerLiterPicked,
       sugarPerLiterPicked,
       steepMinutes: selectedItem.steepMinutes,
-      hintText
+      hintText: hint
     };
   }
 
-  // Fallback
+  // fallback
   typeWrap.style.display = "none";
   const t = SIMPLE_TEAS[0];
   return {
@@ -655,8 +648,7 @@ function getSelectedTeaObject() {
   };
 }
 
-/* ===== Generate Clean Result Text (for copy/share) ===== */
-function getResultText() {
+function getResultText(){
   const liters = toLitersFromMl(waterMlInp.value);
   if (!Number.isFinite(liters)) return "";
 
@@ -669,35 +661,29 @@ function getResultText() {
   const cups = Number(waterMlInp.value) / CUP_ML;
 
   return `
-☕ حاسبة الشاي
-
-المنتج: ${teaObj.brandLabel} — ${teaObj.teaType}
+شاي ${teaObj.brandLabel} — ${teaObj.teaType}
 الماء: ${waterMlInp.value} مل
 المذاق: ${tasteText}
 
-📊 النتائج:
 وزن الشاي: ${teaGrams} جم
 السكر: ${sugarText}
 مدة الخدرة: ${minutesText(teaObj.steepMinutes)}
-عدد البيالات (تقريباً): ${smartNumber(cups)}
-  `.trim();
+كم بيالة تقريباً: ${smartNumber(cups)}
+`.trim();
 }
 
-/* ===== Bind Action Buttons (must run after render to capture new IDs) ===== */
-function bindActionButtons() {
+function bindActionButtons(){
   const copyBtn = document.getElementById("copyBtn");
   const waBtn = document.getElementById("waBtn");
 
   if (copyBtn) {
-    copyBtn.onclick = async (e) => {
-      e.preventDefault();
+    copyBtn.onclick = async () => {
       const text = getResultText();
       if (!text) return;
 
       try {
         await navigator.clipboard.writeText(text);
-      } catch (err) {
-        // Fallback for older browsers
+      } catch (e) {
         const ta = document.createElement("textarea");
         ta.value = text;
         ta.style.position = "fixed";
@@ -708,136 +694,92 @@ function bindActionButtons() {
         document.body.removeChild(ta);
       }
 
-      const originalText = copyBtn.textContent;
-      copyBtn.textContent = "✓ تم النسخ";
-      setTimeout(() => {
-        copyBtn.textContent = originalText;
-      }, 1500);
+      copyBtn.textContent = "تم النسخ ✓";
+      setTimeout(() => copyBtn.textContent = "نسخ النتيجة", 1500);
     };
   }
 
   if (waBtn) {
-    waBtn.onclick = (e) => {
-      e.preventDefault();
+    waBtn.onclick = () => {
       const text = encodeURIComponent(getResultText());
       if (!text) return;
-      window.open(`https://wa.me/?text=${text}`, "_blank");
+      window.location.href = `https://wa.me/?text=${text}`;
     };
   }
 }
 
-/* ===== Main Render Function ===== */
-function render() {
+function render(){
   try {
     const liters = toLitersFromMl(waterMlInp.value);
-    
     if (!Number.isFinite(liters)) {
-      resultsContainer.innerHTML = `
-        <div class="error-panel">
-          <div class="error-title">⚠️ خطأ في الإدخال</div>
-          <div class="error-detail">أدخل كمية ماء صحيحة بالمل (أكبر من 0)</div>
-        </div>
-      `;
+      output.innerHTML = `<div class="error-panel">⚠️ دخل كمية ماء صحيحة بالمل.</div>`;
       return;
     }
 
     const teaObj = getSelectedTeaObject();
     const taste = tasteSel.value;
 
-    // Update taste hint
-    teaHint.textContent = teaObj.hintText;
-    teaHint.style.display = teaObj.hintText ? "block" : "none";
+    tasteHint.textContent = teaObj.hintText;
 
-    // Calculate values
     const teaGrams = teaObj.teaPerLiterPicked * liters;
     const sugarGrams = teaObj.sugarPerLiterPicked === 0 ? 0 : (teaObj.sugarPerLiterPicked * liters);
+
     const waterMl = Number(waterMlInp.value);
     const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
+
     const sugarText = (teaObj.sugarPerLiterPicked === 0) ? "بدون سكر" : `${smartNumber(sugarGrams)} جم`;
 
-    // Render KPI Grid + Action Buttons + Summary
-    resultsContainer.innerHTML = `
-      <div class="kpi-grid">
-        <!-- KPI 1: Tea Weight -->
-        <div class="kpi-box">
-          <div class="kpi-label">
-            <i data-lucide="weight"></i>
-            وزن الشاي المطلوب
-          </div>
-          <div class="kpi-value">${smartNumber(teaGrams)} <span style="font-size: 0.5em; opacity: 0.7;">جم</span></div>
-          <div class="kpi-note">${tasteLabel(taste)} • ${smartNumber(teaObj.teaPerLiterPicked)} جم/لتر</div>
+    output.innerHTML = `
+      <div class="kpi">
+        <div class="box">
+          <div class="muted"><i data-lucide="scale"></i> وزن الشاي المطلوب</div>
+          <div class="big">${smartNumber(teaGrams)} جم</div>
+          <div class="muted2">${tasteLabel(taste)} • لكل لتر: ${smartNumber(teaObj.teaPerLiterPicked)} جم</div>
         </div>
 
-        <!-- KPI 2: Sugar -->
-        <div class="kpi-box">
-          <div class="kpi-label">
-            <i data-lucide="candy"></i>
-            السكر المطلوب
-          </div>
-          <div class="kpi-value">${sugarText}</div>
-          <div class="kpi-note">${taste === "nosugar" ? "بدون إضافة" : `${smartNumber(teaObj.sugarPerLiterPicked)} جم/لتر`}</div>
+        <div class="box">
+          <div class="muted"><i data-lucide="candy"></i> السكر</div>
+          <div class="big">${sugarText}</div>
+          <div class="muted2">${taste === "nosugar" ? "بدون سكر" : `لكل لتر: ${smartNumber(teaObj.sugarPerLiterPicked)} جم`}</div>
         </div>
 
-        <!-- KPI 3: Steep Time -->
-        <div class="kpi-box">
-          <div class="kpi-label">
-            <i data-lucide="clock"></i>
-            مدة الخدرة
-          </div>
-          <div class="kpi-value">${minutesText(teaObj.steepMinutes)}</div>
-          <div class="kpi-note">اتركه في الماء الساخن لهذا الوقت</div>
+        <div class="box">
+          <div class="muted"><i data-lucide="clock"></i> مدة الخدرة</div>
+          <div class="big">${minutesText(teaObj.steepMinutes)}</div>
         </div>
 
-        <!-- KPI 4: Cups Count -->
-        <div class="kpi-box">
-          <div class="kpi-label">
-            <i data-lucide="cup"></i>
-            عدد البيالات
-          </div>
-          <div class="kpi-value">${smartNumber(cups)} <span style="font-size: 0.5em; opacity: 0.7;">تقريباً</span></div>
-          <div class="kpi-note">البيالة الواحدة ≈ 100 مل</div>
+        <div class="box">
+          <div class="muted"><i data-lucide="coffee"></i> كم بيالة تكفي (تقريباً)</div>
+          <div class="big">${smartNumber(cups)}</div>
+          <div class="muted2">حجم البيالة الواحدة تقريبًا ١٠٠ مل</div>
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="action-buttons">
-        <button id="copyBtn" class="action-btn">
-          <i data-lucide="copy"></i>
-          نسخ النتيجة
-        </button>
-        <button id="waBtn" class="action-btn">
-          <i data-lucide="send"></i>
-          مشاركة واتساب
-        </button>
+      <div class="actions">
+        <button id="copyBtn" class="actionBtn">نسخ النتيجة</button>
+        <button id="waBtn" class="actionBtn">مشاركة واتساب</button>
       </div>
 
-      <!-- Summary Box -->
-      <div class="summary-box">
-        <b>${teaObj.brandLabel} — ${teaObj.teaType}</b><br/>
-        <b>الماء:</b> ${waterMl} مل | 
-        <b>المذاق:</b> ${tasteLabel(taste)}
+      <div class="note">
+        <b>المنتج:</b> ${teaObj.brandLabel} — ${teaObj.teaType}<br/>
+        <b>المذاق:</b> ${tasteLabel(taste)}<br/>
+        <b>الماء:</b> ${waterMlInp.value} مل
       </div>
     `;
 
-    // Re-render Lucide icons for newly added DOM elements
-    if (window.lucide) {
-      lucide.createIcons();
-    }
-
-    // CRITICAL: Bind buttons AFTER they're added to DOM
+    if (window.lucide) lucide.createIcons();
     bindActionButtons();
-
-  } catch (error) {
-    resultsContainer.innerHTML = `
+  } catch (e) {
+    output.innerHTML = `
       <div class="error-panel">
-        <div class="error-title">⚠️ حدث خطأ في البيانات</div>
-        <div class="error-detail">${String(error.message || error)}</div>
+        ⚠️ صار خطأ في بيانات الشاي (قوس/فاصلة/قيمة).<br/>
+        <small>تفاصيل: ${String(e.message || e)}</small>
       </div>
     `;
   }
 }
 
-/* ===== Event Listeners ===== */
+/* events */
 teaSearch.addEventListener("input", () => {
   populateMainSelect(teaSearch.value);
   render();
@@ -848,7 +790,7 @@ typeSelect.addEventListener("change", render);
 waterMlInp.addEventListener("input", render);
 tasteSel.addEventListener("change", render);
 
-/* ===== Initialize ===== */
+/* init */
 populateMainSelect("");
 render();
 
