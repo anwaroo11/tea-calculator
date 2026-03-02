@@ -31,8 +31,6 @@
       --input-focus: #d9a574;
       --error-bg: #ffe8e0;
       --error-text: #a83d2f;
-      --success-bg: #e8f3e8;
-      --success-text: #2d6e3d;
     }
 
     * {
@@ -41,45 +39,23 @@
       box-sizing: border-box;
     }
 
-    html {
-      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
+    :root { 
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial; 
     }
 
-    body {
+    body { 
+      margin: 0; 
       background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
       color: var(--text-primary);
-      min-height: 100vh;
       padding: 20px;
+      min-height: 100vh;
     }
 
-    .wrap {
-      max-width: 900px;
+    .wrap { 
+      max-width: 900px; 
       margin: 0 auto;
     }
 
-    /* Header */
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-      padding: 0 16px;
-    }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: var(--text-primary);
-      letter-spacing: -0.5px;
-    }
-
-    p.sub {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      opacity: 0.95;
-    }
-
-    /* Main Card */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border-light);
@@ -93,85 +69,93 @@
       box-shadow: var(--card-shadow-hover);
     }
 
-    /* Grid Layout for Inputs */
-    .grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: 1fr;
+    h1 { 
+      margin: 0 0 12px; 
+      font-size: 32px; 
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+
+    p.sub { 
+      margin: 0 0 28px; 
+      opacity: 0.85; 
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .grid { 
+      display: grid; 
+      gap: 16px; 
+      grid-template-columns: 1fr; 
       margin-bottom: 24px;
     }
 
     @media (min-width: 640px) {
-      .grid {
-        grid-template-columns: 1fr 1fr;
+      .grid { 
+        grid-template-columns: 1fr 1fr; 
       }
     }
 
     @media (min-width: 900px) {
       .grid {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: repeat(4, 1fr);
         gap: 14px;
       }
     }
 
-    /* Input Group */
-    .input-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      font-size: 12px;
+    label { 
+      font-size: 12px; 
+      opacity: 0.9; 
+      display: block; 
+      margin-bottom: 8px; 
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-secondary);
-      margin-bottom: 8px;
-      opacity: 0.9;
     }
 
-    select,
-    input {
+    select, input {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
       border: 1.5px solid var(--input-border);
       background: var(--input-bg);
       color: var(--text-primary);
-      font-size: 15px;
-      height: 44px;
       outline: none;
+      font-size: 15px;
+      box-sizing: border-box;
+      height: 44px;
       transition: all 0.2s ease;
       font-family: inherit;
     }
 
-    select:hover,
-    input:hover {
+    select:hover, input:hover {
       border-color: var(--accent-tea-light);
       background: #fffbf7;
     }
 
-    select:focus,
-    input:focus {
+    select:focus, input:focus {
       border-color: var(--input-focus);
       background: #fffbf7;
       box-shadow: 0 0 0 3px rgba(217, 165, 116, 0.1);
     }
 
-    input[type="number"] {
-      appearance: textfield;
-      -moz-appearance: textfield;
+    input[type=number] { 
+      appearance: textfield; 
+      -moz-appearance: textfield; 
     }
 
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
     }
 
-    /* 🔧 Select Dropdown Options Fix */
-    select option {
-      color: var(--text-primary);
+    /* 🔧 Fix: Dark text on light dropdown for desktop readability */
+    select option { 
+      color: var(--text-primary); 
       background: var(--card-bg);
       padding: 8px 12px;
     }
@@ -181,47 +165,42 @@
       color: white;
     }
 
-    input::placeholder {
+    input::placeholder { 
+      opacity: 0.6; 
       color: var(--text-muted);
-      opacity: 0.7;
     }
 
-    /* Helper Text */
-    .helper-text {
-      font-size: 11px;
-      color: var(--text-muted);
+    .muted2 { 
+      opacity: 0.75; 
+      font-size: 11px; 
       margin-top: 5px;
+      color: var(--text-muted);
       line-height: 1.4;
-      opacity: 0.85;
     }
 
-    /* Results Output Section */
     .out {
       margin-top: 28px;
-      padding: 0;
     }
 
-    /* KPI Grid */
-    .kpi {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: 1fr;
+    .kpi { 
+      display: grid; 
+      gap: 12px; 
+      grid-template-columns: 1fr; 
       margin-bottom: 16px;
     }
 
     @media (min-width: 640px) {
-      .kpi {
-        grid-template-columns: 1fr 1fr;
+      .kpi { 
+        grid-template-columns: 1fr 1fr; 
       }
     }
 
     @media (min-width: 900px) {
-      .kpi {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+      .kpi { 
+        grid-template-columns: repeat(4, 1fr); 
       }
     }
 
-    /* KPI Box */
     .box {
       padding: 16px;
       border-radius: 14px;
@@ -235,49 +214,42 @@
       border-color: var(--accent-tea-light);
     }
 
-    .box .muted {
-      display: flex;
-      align-items: center;
+    .muted { 
+      opacity: 0.85; 
+      font-size: 11px; 
+      margin-bottom: 6px; 
+      display: flex; 
+      align-items: center; 
       gap: 6px;
-      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
       color: var(--text-secondary);
-      margin-bottom: 6px;
-      opacity: 0.85;
     }
 
-    .box .muted svg {
-      width: 14px;
-      height: 14px;
-      stroke-width: 1.8;
+    .muted svg { 
+      width: 14px; 
+      height: 14px; 
+      stroke-width: 1.8; 
+      opacity: 0.9;
       color: var(--accent-tea);
     }
 
-    .box .big {
-      font-size: 24px;
-      font-weight: 700;
+    .big { 
+      font-size: 24px; 
+      font-weight: 700; 
+      margin-top: 4px;
       color: var(--accent-tea);
-      margin: 6px 0;
       letter-spacing: -0.5px;
     }
 
-    .box .muted2 {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 5px;
-      line-height: 1.4;
-      opacity: 0.8;
-    }
-
-    /* Note/Summary Box */
-    .note {
-      margin-top: 16px;
+    .note { 
+      margin-top: 16px; 
       padding: 12px;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--bg-secondary) 0%, #f8f2eb 100%);
       border: 1px solid var(--border-light);
-      font-size: 12px;
+      font-size: 12px; 
+      opacity: 0.85;
       line-height: 1.6;
       color: var(--text-secondary);
     }
@@ -287,12 +259,11 @@
       color: var(--text-primary);
     }
 
-    /* Action Buttons */
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-      flex-wrap: wrap;
+    .actions { 
+      display: flex; 
+      gap: 10px; 
+      margin-top: 16px; 
+      flex-wrap: wrap; 
     }
 
     .actionBtn {
@@ -313,7 +284,7 @@
       gap: 6px;
     }
 
-    .actionBtn:hover {
+    .actionBtn:hover { 
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(125, 110, 78, 0.25);
       border-color: var(--accent-tea);
@@ -340,20 +311,9 @@
       line-height: 1.5;
     }
 
-    .error-panel div {
-      display: block;
-    }
-
-    /* Type Wrap (conditional visibility) */
+    /* Conditional visibility */
     #typeWrap {
       display: none;
-    }
-
-    /* Utility: Lucide icon sizing */
-    .muted svg,
-    .actionBtn svg {
-      stroke-linecap: round;
-      stroke-linejoin: round;
     }
 
     /* Responsive adjustments */
@@ -371,7 +331,7 @@
         font-size: 11px;
       }
 
-      .box .big {
+      .big {
         font-size: 20px;
       }
 
@@ -386,56 +346,44 @@
 
 <body>
   <div class="wrap">
-    <!-- Header -->
-    <div class="header">
-      <h1>☕ حاسبة الشاي</h1>
-      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة + كم بيالة تكفي.</p>
-    </div>
-
-    <!-- Main Card -->
     <div class="card">
-      <!-- Inputs Grid -->
+      <h1>حاسبة الشاي ☕</h1>
+      <p class="sub">اختر الشاي، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر حسب المذاق + مدة الخدرة + كم بيالة تكفي.</p>
+
       <div class="grid">
-        <!-- Search Input -->
-        <div class="input-group">
+        <div>
           <label>بحث عن الشاي</label>
           <input id="teaSearch" type="text" placeholder="اكتب اسم الشاي أو نوع الورق..." />
-          <div class="helper-text">مثال: المنيس — نهرين — OP1</div>
-        </div>
+          <div class="muted2">مثال: المنيس — نهرين — OP1</div>
 
-        <!-- Main Tea Select -->
-        <div class="input-group">
-          <label>اختر الشاي</label>
+          <label style="margin-top:10px;">اختر الشاي</label>
           <select id="teaSelect"></select>
         </div>
 
-        <!-- Type Select (conditional) -->
-        <div id="typeWrap" class="input-group">
+        <!-- يظهر فقط لو الشاي له تصنيفات (مثل المنيس) -->
+        <div id="typeWrap">
           <label>نوع الورق</label>
           <select id="typeSelect"></select>
-          <div class="helper-text">يظهر فقط للبراند اللي له أكثر من نوع</div>
+          <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
         </div>
 
-        <!-- Water Input -->
-        <div class="input-group">
+        <div>
           <label>كمية الماء (مل)</label>
           <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
-          <div class="helper-text">مثال: 500 أو 750 أو 1000</div>
+          <div class="muted2">مثال: 500 أو 750 أو 1000</div>
         </div>
 
-        <!-- Taste Select -->
-        <div class="input-group">
+        <div>
           <label>المذاق</label>
           <select id="taste">
             <option value="normal" selected>مناسب</option>
             <option value="heavy">ثقيل</option>
             <option value="nosugar">بدون سكر</option>
           </select>
-          <div class="helper-text" id="tasteHint"></div>
+          <div class="muted2" id="tasteHint"></div>
         </div>
       </div>
 
-      <!-- Results Section -->
       <div class="out" id="output" aria-live="polite"></div>
     </div>
   </div>
@@ -518,7 +466,7 @@ function tasteLabel(v){
   return "مناسب";
 }
 
-/* ===== UI References ===== */
+/* ===== UI ===== */
 const teaSearch  = document.getElementById("teaSearch");
 const teaSelect  = document.getElementById("teaSelect");
 const typeWrap   = document.getElementById("typeWrap");
@@ -772,8 +720,8 @@ function render(){
   } catch (e) {
     output.innerHTML = `
       <div class="error-panel">
-        ⚠️ صار خطأ في بيانات الشاي (قوس/فاصلة/قيمة).<br/>
-        <small>تفاصيل: ${String(e.message || e)}</small>
+        ⚠️ صار خطأ في بيانات الشاي (قوس/فاصلة/قيمة).
+        <div style="opacity:.8;font-size:12px;margin-top:6px">تفاصيل: ${String(e.message || e)}</div>
       </div>
     `;
   }
