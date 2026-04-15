@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>تجربة إضافة خدرة شاي</title>
+
+  <!-- أيقونة المتصفح والآيفون -->
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="خدرة شاي">
+
+  <style>
+    :root {
+      --bg: #0f1f1b;
+      --card: rgba(28, 51, 44, 0.88);
+      --card-2: rgba(36, 64, 56, 0.82);
+      --border: rgba(196, 220, 208, 0.12);
+      --text: #edf7f1;
+      --muted: rgba(237, 247, 241, 0.72);
+      --btn-bg: rgba(255,255,255,0.08);
+      --btn-hover: rgba(255,255,255,0.14);
+      --shadow: 0 10px 30px rgba(0,0,0,.22);
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #0f1f1b 0%, #163129 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      margin-top: 30px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.8;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .hint {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      line-height: 1.8;
+      font-size: 14px;
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
+
+    .hint strong {
+      color: var(--text);
+    }
+
+    .hint.hidden {
+      display: none;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--btn-bg);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background .2s ease, transform .15s ease;
+    }
+
+    button:hover {
+      background: var(--btn-hover);
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+
+    .status {
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      margin: 4px 4px 0;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .logo img {
+      width: 74px;
+      height: 74px;
+      border-radius: 18px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="logo">
+        <img src="icon.png" alt="خدرة شاي">
+      </div>
+
+      <h1>خدرة شاي</h1>
+      <p>صفحة اختبار لإضافة الموقع إلى الشاشة الرئيسية في الآيفون.</p>
+
+      <div id="iosInstallHint" class="hint hidden">
+        لإضافة <strong>خدرة شاي</strong> إلى الشاشة الرئيسية في الآيفون:
+        <br>
+        1) افتح الموقع من <strong>Safari</strong>
+        <br>
+        2) اضغط زر <strong>المشاركة</strong>
+        <br>
+        3) اختر <strong>إضافة إلى الشاشة الرئيسية</strong>
+        <br><br>
+        إذا كنت فاتحه من الشاشة الرئيسية أصلًا، المفروض ما تشوف هذه الرسالة. البشر يحبون الاختبارات، واضح.
+        <div class="actions">
+          <button id="closeInstallHint">إخفاء</button>
+          <button id="showInstallHint">إظهار من جديد</button>
+        </div>
+      </div>
+
+      <div class="status" id="statusBox"></div>
+    </div>
+  </div>
+
+  <script>
+    function setupIOSInstallHint() {
+      const hint = document.getElementById("iosInstallHint");
+      const closeBtn = document.getElementById("closeInstallHint");
+      const showBtn = document.getElementById("showInstallHint");
+      const statusBox = document.getElementById("statusBox");
+
+      const ua = navigator.userAgent || "";
+      const isIOS = /iphone|ipad|ipod/i.test(ua);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+      const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+
+      const hiddenByUser = localStorage.getItem("hideIOSInstallHint") === "1";
+
+      function renderStatus() {
+        const chips = [
+          `<span class="badge">iOS: ${isIOS ? "نعم" : "لا"}</span>`,
+          `<span class="badge">Safari: ${isSafari ? "نعم" : "لا"}</span>`,
+          `<span class="badge">من الشاشة الرئيسية: ${isStandalone ? "نعم" : "لا"}</span>`
+        ];
+        statusBox.innerHTML = chips.join("");
+      }
+
+      function showHintIfNeeded() {
+        if (isIOS && isSafari && !isStandalone && !hiddenByUser) {
+          hint.classList.remove("hidden");
+        } else {
+          hint.classList.add("hidden");
+        }
+      }
+
+      closeBtn?.addEventListener("click", () => {
+        hint.classList.add("hidden");
+        localStorage.setItem("hideIOSInstallHint", "1");
+      });
+
+      showBtn?.addEventListener("click", () => {
+        localStorage.removeItem("hideIOSInstallHint");
+        if (isIOS && isSafari && !isStandalone) {
+          hint.classList.remove("hidden");
+        }
+      });
+
+      renderStatus();
+      showHintIfNeeded();
+    }
+
+    setupIOSInstallHint();
+  </script>
+</body>
+</html>
