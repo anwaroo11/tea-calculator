@@ -876,28 +876,32 @@ function showResults(filterText = "") {
     item.onmouseenter = () => item.style.background = "rgba(255,255,255,0.08)";
     item.onmouseleave = () => item.style.background = "transparent";
 
-    item.onclick = () => {
-      teaSearch.value = r.label;
-      selectedTeaDiv.textContent = `تم اختيار: ${r.label}`;
-      teaResults.style.display = "none";
+item.onclick = () => {
+  teaSearch.value = r.label;
+  teaResults.style.display = "none";
+  teaSearch.blur();
 
-      if (r.type === "simple") {
-        teaSelect.value = "simple:" + r.id;
-        typeWrap.classList.add("hidden");
-        render();
-        return;
-      }
+  if (selectedTeaDiv) {
+    selectedTeaDiv.textContent = `تم اختيار: ${r.label}`;
+  }
 
-      if (r.type === "brand") {
-        teaSelect.value = "brand:" + r.brandId;
-        render(); // يبني typeSelect أولاً
+  if (r.type === "simple") {
+    teaSelect.value = "simple:" + r.id;
+    typeWrap.classList.add("hidden");
+    render();
+    return;
+  }
 
-        setTimeout(() => {
-          typeSelect.value = r.id;
-          render();
-        }, 0);
-      }
-    };
+  if (r.type === "brand") {
+    teaSelect.value = "brand:" + r.brandId;
+    render();
+
+    setTimeout(() => {
+      typeSelect.value = r.id;
+      render();
+    }, 0);
+  }
+};
 
     teaResults.appendChild(item);
   });
@@ -1158,6 +1162,12 @@ teaSearch.addEventListener("input", () => {
 });
 
 teaSearch.addEventListener("focus", () => {
+  teaSearch.select();
+  showResults(teaSearch.value);
+});
+
+teaSearch.addEventListener("click", () => {
+  teaSearch.select();
   showResults(teaSearch.value);
 });
 
