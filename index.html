@@ -251,7 +251,29 @@
   <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو نوع الورق..." />
   <div class="muted2">مثال: المنيس — نهرين — OP1</div>
 
-  <select id="teaSelect" style="margin-top:10px;"></select>
+  <div id="teaModeBlock" style="grid-column: span 2;">
+  <label>الشاي</label>
+
+  <div style="position: relative;">
+    <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو نوع الورق..." />
+
+    <div id="teaResults" style="
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      background: rgba(28, 51, 44, 0.95);
+      border: 1px solid rgba(196, 220, 208, 0.12);
+      border-radius: 12px;
+      margin-top: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+      z-index: 100;
+    "></div>
+  </div>
+
+  <div id="selectedTea" class="muted2" style="margin-top:8px;"></div>
 </div>
 
   <div id="typeWrap" class="hidden">
@@ -1062,7 +1084,31 @@ function render(){
 
 teaSearch.addEventListener("input", () => {
   populateMainSelect(teaSearch.value);
-  render();
+  const teaResults = document.getElementById("teaResults");
+const selectedTeaDiv = document.getElementById("selectedTea");
+
+function showResults(filterText = "") {
+  ...
+}
+
+// events
+teaSearch.addEventListener("input", () => {
+  showResults(teaSearch.value);
+});
+
+teaSearch.addEventListener("focus", () => {
+  showResults(teaSearch.value);
+});
+
+document.addEventListener("click", (e) => {
+  if (!teaModeBlock.contains(e.target)) {
+    teaResults.style.display = "none";
+  }
+});
+
+populateMainSelect("");
+updateModeUI();
+render();
 });
 
 modeSelect.addEventListener("change", updateModeUI);
