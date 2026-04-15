@@ -248,24 +248,41 @@
 <div id="teaModeBlock" style="grid-column: span 2;">
   <label>اختر الشاي</label>
 
-  <div style="position: relative;">
-    <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو اختر من القائمة..." />
+<div style="position: relative;">
+  <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو اختار من القائمة..." style="padding-left:44px;" />
 
-    <div id="teaResults" style="
-      position: absolute;
-      top: 100%;
-      right: 0;
-      left: 0;
-      background: rgba(28, 51, 44, 0.95);
-      border: 1px solid rgba(196, 220, 208, 0.12);
-      border-radius: 12px;
-      margin-top: 6px;
-      max-height: 220px;
-      overflow-y: auto;
-      display: none;
-      z-index: 100;
-    "></div>
-  </div>
+  <button id="clearTeaSearch" type="button" style="
+    position:absolute;
+    left:10px;
+    top:10px;
+    width:24px;
+    height:24px;
+    border:none;
+    border-radius:999px;
+    background:rgba(255,255,255,0.08);
+    color:#edf7f1;
+    cursor:pointer;
+    display:none;
+    line-height:24px;
+    padding:0;
+    font-size:14px;
+  ">×</button>
+
+  <div id="teaResults" style="
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    background: rgba(28, 51, 44, 0.95);
+    border: 1px solid rgba(196, 220, 208, 0.12);
+    border-radius: 12px;
+    margin-top: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+  "></div>
+</div>
 
   <select id="teaSelect" style="display:none;"></select>
 </div>
@@ -788,6 +805,7 @@ const waterMlInp = document.getElementById("waterMl");
 const tasteSel   = document.getElementById("taste");
 const tasteHint  = document.getElementById("tasteHint");
 const output     = document.getElementById("output");
+const clearTeaSearch = document.getElementById("clearTeaSearch");
 
 const teaResults = document.getElementById("teaResults");
 
@@ -800,7 +818,9 @@ const manualTeaPerLiter = document.getElementById("manualTeaPerLiter");
 const manualSugarPerLiter = document.getElementById("manualSugarPerLiter");
 const manualSteepMinutes = document.getElementById("manualSteepMinutes");
 
-function populateMainSelect() {
+function updateClearButton() {
+  clearTeaSearch.style.display = teaSearch.value ? "block" : "none";
+}
   const current = teaSelect.value;
   teaSelect.innerHTML = "";
 
@@ -877,6 +897,28 @@ function showResults(filterText = "") {
     item.onmouseleave = () => item.style.background = "transparent";
 
 item.onclick = () => {
+  teaSearch.value = r.label;
+  teaResults.style.display = "none";
+  teaSearch.blur();
+  updateClearButton();
+
+  if (r.type === "simple") {
+    teaSelect.value = "simple:" + r.id;
+    typeWrap.classList.add("hidden");
+    render();
+    return;
+  }
+
+  if (r.type === "brand") {
+    teaSelect.value = "brand:" + r.brandId;
+    render();
+
+    setTimeout(() => {
+      typeSelect.value = r.id;
+      render();
+    }, 0);
+  }
+};
   teaSearch.value = r.label;
   teaResults.style.display = "none";
   teaSearch.blur();
@@ -1158,7 +1200,23 @@ function render(){
 
 /* events */
 teaSearch.addEventListener("input", () => {
+  updateClearButton();
   showResults(teaSearch.value);
+});
+
+teaSearch.addEventListener("focus", () => {
+  showResults(teaSearch.value);
+});
+
+teaSearch.addEventListener("click", () => {
+  showResults(teaSearch.value);
+});
+
+clearTeaSearch.addEventListener("click", () => {
+  teaSearch.value = "";
+  updateClearButton();
+  showResults("");
+  teaSearch.focus();
 });
 
 teaSearch.addEventListener("focus", () => {
@@ -1187,6 +1245,9 @@ manualSteepMinutes.addEventListener("input", render);
 
 /* init */
 populateMainSelect();
+updateClearButton();
+updateModeUI();
+render();
 updateModeUI();
 render();
 </script>
