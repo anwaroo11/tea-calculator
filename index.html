@@ -795,6 +795,9 @@ const tasteSel   = document.getElementById("taste");
 const tasteHint  = document.getElementById("tasteHint");
 const output     = document.getElementById("output");
 
+const teaResults = document.getElementById("teaResults");
+const selectedTeaDiv = document.getElementById("selectedTea");
+
 const teaModeBlock = document.getElementById("teaModeBlock");
 const manualModeBlock = document.getElementById("manualModeBlock");
 const manualSugarWrap = document.getElementById("manualSugarWrap");
@@ -804,33 +807,23 @@ const manualTeaPerLiter = document.getElementById("manualTeaPerLiter");
 const manualSugarPerLiter = document.getElementById("manualSugarPerLiter");
 const manualSteepMinutes = document.getElementById("manualSteepMinutes");
 
-function populateMainSelect(filterText = "") {
-  const q = (filterText || "").trim().toLowerCase();
+function populateMainSelect() {
   const current = teaSelect.value;
-
   teaSelect.innerHTML = "";
 
   SIMPLE_TEAS.forEach(t => {
-    const label = `${t.brand} — ${t.teaType}`.toLowerCase();
-    if (q && !label.includes(q)) return;
-
     const opt = document.createElement("option");
     opt.value = `simple:${t.id}`;
-    opt.textContent = t.teaType
-  ? `${t.brand} — ${t.teaType}`
-  : t.brand;
+    opt.textContent = t.teaType && t.teaType !== "—"
+      ? `${t.brand} — ${t.teaType}`
+      : t.brand;
     teaSelect.appendChild(opt);
   });
 
   BRANDED_TEAS.forEach(b => {
-    const brandLabel = `${b.brand}`.toLowerCase();
-    const typesLabel = b.items.map(x => x.teaType).join(" ").toLowerCase();
-    const match = !q || brandLabel.includes(q) || typesLabel.includes(q);
-    if (!match) return;
-
     const opt = document.createElement("option");
     opt.value = `brand:${b.brandId}`;
-    opt.textContent = `${b.brand}`;
+    opt.textContent = b.brand;
     teaSelect.appendChild(opt);
   });
 
@@ -842,6 +835,83 @@ function populateMainSelect(filterText = "") {
   }
 }
 
+function showResults(filterText = "") {
+  const q = filterText.trim().toLowerCase();
+  teaResults.innerHTML = "";
+
+  const results = [];
+
+  SIMPLE_TEAS.forEach(t => {
+    const label = `${t.brand} ${t.teaType || ""}`.toLowerCase();
+    if (!q || label.includes(q)) {
+      results.push({
+        id: t.id,
+        label: t.teaType && t.teaType !== "—"
+          ? `${t.brand} — ${t.teaType}`
+          : t.brand,
+        type: "simple"
+      });
+    }
+  });
+
+  BRANDED_TEAS.forEach(b => {
+    b.items.forEach(it => {
+      const label = `${b.brand} ${it.teaType}`.toLowerCase();
+      if (!q || label.includes(q)) {
+        results.push({
+          id: it.id,
+          brandId: b.brandId,
+          label: `${b.brand} — ${it.teaType}`,
+          type: "brand"
+        });
+      }
+    });
+  });
+
+  if (results.length === 0) {
+    teaResults.style.display = "none";
+    return;
+  }
+
+  results.forEach(r => {
+    const item = document.createElement("div");
+    item.textContent = r.label;
+    item.style.padding = "10px";
+    item.style.cursor = "pointer";
+    item.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+
+    item.onmouseenter = () => item.style.background = "rgba(255,255,255,0.08)";
+    item.onmouseleave = () => item.style.background = "transparent";
+
+    item.onclick = () => {
+      teaSearch.value = r.label;
+      selectedTeaDiv.textContent = `تم اختيار: ${r.label}`;
+      teaResults.style.display = "none";
+
+      if (r.type === "simple") {
+        teaSelect.value = "simple:" + r.id;
+        typeWrap.classList.add("hidden");
+        render();
+        return;
+      }
+
+      if (r.type === "brand") {
+        teaSelect.value = "brand:" + r.brandId;
+        render(); // يبني typeSelect أولاً
+
+        setTimeout(() => {
+          typeSelect.value = r.id;
+          render();
+        }, 0);
+      }
+    };
+
+    teaResults.appendChild(item);
+  });
+
+  teaResults.style.display = "block";
+}
+
 function updateModeUI() {
   const isManual = modeSelect.value === "manual";
 
@@ -850,6 +920,11 @@ function updateModeUI() {
   manualModeBlock.classList.toggle("hidden", !isManual);
   manualSugarWrap.classList.toggle("hidden", !isManual);
   manualSteepWrap.classList.toggle("hidden", !isManual);
+
+  if (isManual) {
+    teaResults.style.display = "none";
+    selectedTeaDiv.textContent = "";
+  }
 
   render();
 }
@@ -877,8 +952,7 @@ function getSelectedTeaObject(){
       teaType: tea.teaType,
       teaPerLiterPicked,
       sugarPerLiterPicked,
-      steepMinutes: tea.steepMinutes,
-      hintText: `لكل 1 لتر: مناسب (شاي ${smartNumber(tea.teaPerLiterByTaste.normal)} • سكر ${smartNumber(tea.sugarPerLiterByTaste.normal)}) — متوسط (شاي ${smartNumber(tea.teaPerLiterByTaste.medium)} • سكر ${smartNumber(tea.sugarPerLiterByTaste.medium)}) — بدون سكر (شاي ${smartNumber(tea.teaPerLiterByTaste.nosugar)} • سكر 0)`
+      steepMinutes: tea.steepMinutes
     };
   }
 
@@ -913,8 +987,7 @@ function getSelectedTeaObject(){
       teaType: selectedItem.teaType,
       teaPerLiterPicked,
       sugarPerLiterPicked,
-      steepMinutes: selectedItem.steepMinutes,
-      hintText: `لكل 1 لتر: مناسب (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.normal)} • سكر ${smartNumber(selectedItem.sugarPerLiterByTaste.normal)}) — متوسط (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.medium)} • سكر ${smartNumber(selectedItem.sugarPerLiterByTaste.medium)}) — بدون سكر (شاي ${smartNumber(selectedItem.teaPerLiterByTaste.nosugar)} • سكر 0)`
+      steepMinutes: selectedItem.steepMinutes
     };
   }
 
@@ -938,8 +1011,7 @@ function getManualTeaObject() {
     teaType: "وزنة مخصصة",
     teaPerLiterPicked: teaBase,
     sugarPerLiterPicked,
-    steepMinutes: steepText || "-",
-    hintText: `لكل 1 لتر: شاي ${smartNumber(teaBase)} جم${Number.isFinite(sugarBase) ? ` • سكر ${smartNumber(sugarBase)} جم` : ""}`
+    steepMinutes: steepText || "-"
   };
 }
 
@@ -956,12 +1028,13 @@ function getResultText(){
   if (!teaObj) return "";
 
   const tasteText = tasteLabel(tasteSel.value);
+  const teaTypeText = teaObj.teaType && teaObj.teaType !== "—" ? ` — ${teaObj.teaType}` : "";
   const teaGrams = smartNumber(teaObj.teaPerLiterPicked * liters);
   const sugarText = teaObj.sugarPerLiterPicked === 0 ? "بدون سكر" : (smartNumber(teaObj.sugarPerLiterPicked * liters) + " جم");
   const cups = Number(waterMlInp.value) / CUP_ML;
 
   return `
-${teaObj.brandLabel} — ${teaObj.teaType}
+${teaObj.brandLabel}${teaTypeText}
 الماء: ${waterMlInp.value} مل
 المذاق: ${tasteText}
 
@@ -1025,12 +1098,16 @@ function render(){
 
     const taste = tasteSel.value;
 
+    // نخفي النص المربك تحت المذاق
+    tasteHint.textContent = "";
+
     const teaGrams = teaObj.teaPerLiterPicked * liters;
     const sugarGrams = teaObj.sugarPerLiterPicked === 0 ? 0 : (teaObj.sugarPerLiterPicked * liters);
 
     const waterMl = Number(waterMlInp.value);
     const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
     const sugarText = (teaObj.sugarPerLiterPicked === 0) ? "بدون سكر" : `${smartNumber(sugarGrams)} جم`;
+    const teaTypeText = teaObj.teaType && teaObj.teaType !== "—" ? ` — ${teaObj.teaType}` : "";
 
     output.innerHTML = `
       <div class="kpi">
@@ -1064,7 +1141,7 @@ function render(){
       </div>
 
       <div class="note">
-        <b>المنتج:</b> ${teaObj.brandLabel} — ${teaObj.teaType}<br/>
+        <b>المنتج:</b> ${teaObj.brandLabel}${teaTypeText}<br/>
         <b>المذاق:</b> ${tasteLabel(taste)}<br/>
         <b>الماء:</b> ${waterMlInp.value} مل
       </div>
@@ -1082,16 +1159,7 @@ function render(){
   }
 }
 
-teaSearch.addEventListener("input", () => {
-  populateMainSelect(teaSearch.value);
-  const teaResults = document.getElementById("teaResults");
-const selectedTeaDiv = document.getElementById("selectedTea");
-
-function showResults(filterText = "") {
-  ...
-}
-
-// events
+/* events */
 teaSearch.addEventListener("input", () => {
   showResults(teaSearch.value);
 });
@@ -1106,11 +1174,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-populateMainSelect("");
-updateModeUI();
-render();
-});
-
 modeSelect.addEventListener("change", updateModeUI);
 teaSelect.addEventListener("change", render);
 typeSelect.addEventListener("change", render);
@@ -1121,7 +1184,8 @@ manualTeaPerLiter.addEventListener("input", render);
 manualSugarPerLiter.addEventListener("input", render);
 manualSteepMinutes.addEventListener("input", render);
 
-populateMainSelect("");
+/* init */
+populateMainSelect();
 updateModeUI();
 render();
 </script>
