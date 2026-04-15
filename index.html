@@ -245,13 +245,7 @@
     <div class="muted2">اختر من القائمة أو أدخل الوزنة بنفسك</div>
   </div>
 
- <div id="teaModeBlock" style="grid-column: span 2;">
-  <label>الشاي</label>
-
-  <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو نوع الورق..." />
-  <div class="muted2">مثال: المنيس — نهرين — OP1</div>
-
-  <div id="teaModeBlock" style="grid-column: span 2;">
+<div id="teaModeBlock" style="grid-column: span 2;">
   <label>الشاي</label>
 
   <div style="position: relative;">
@@ -273,7 +267,7 @@
     "></div>
   </div>
 
-  <div id="selectedTea" class="muted2" style="margin-top:8px;"></div>
+  <select id="teaSelect" style="display:none;"></select>
 </div>
 
   <div id="typeWrap" class="hidden">
@@ -796,7 +790,6 @@ const tasteHint  = document.getElementById("tasteHint");
 const output     = document.getElementById("output");
 
 const teaResults = document.getElementById("teaResults");
-const selectedTeaDiv = document.getElementById("selectedTea");
 
 const teaModeBlock = document.getElementById("teaModeBlock");
 const manualModeBlock = document.getElementById("manualModeBlock");
