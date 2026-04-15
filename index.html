@@ -306,6 +306,406 @@
 <script>
 const SIMPLE_TEAS = [
   {
+  id: "musmak",
+  teaType: "—",
+  brand: "المصمك",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 48, medium: 58, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "twinings",
+  teaType: "—",
+  brand: "تويننجز",
+  teaPerLiterByTaste: { normal: 10.5, medium: 12, nosugar: 10.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 20, max: 30 }
+},
+{
+  id: "sankin",
+  teaType: "—",
+  brand: "سنكين",
+  teaPerLiterByTaste: { normal: 10.5, medium: 12, nosugar: 10.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 20, max: 30 }
+},
+{
+  id: "hout-ahmar",
+  teaType: "—",
+  brand: "الحوت الأحمر",
+  teaPerLiterByTaste: { normal: 10.5, medium: 10.5, nosugar: 9.5 },
+  sugarPerLiterByTaste: { normal: 53, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "muqaddam",
+  teaType: "—",
+  brand: "المقدم",
+  teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "dahna",
+  teaType: "—",
+  brand: "الدهناء",
+  teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "tolay",
+  teaType: "—",
+  brand: "تولاي",
+  teaPerLiterByTaste: { normal: 13, medium: 14, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 60, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "bin-mangash",
+  teaType: "—",
+  brand: "بن منقاش",
+  teaPerLiterByTaste: { normal: 13, medium: 14, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 48, medium: 58, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "fakham-bop1",
+  teaType: "BOP1",
+  brand: "الفخم",
+  teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "istiknan",
+  teaType: "—",
+  brand: "استكنان",
+  teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 48, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "hub-wadahn",
+  teaType: "—",
+  brand: "حب ودهن",
+  teaPerLiterByTaste: { normal: 12, medium: 15, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "ceylon",
+  teaType: "—",
+  brand: "سيلان",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "mazad",
+  teaType: "—",
+  brand: "المزاد",
+  teaPerLiterByTaste: { normal: 11, medium: 11, nosugar: 11 },
+  sugarPerLiterByTaste: { normal: 48, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "abu-ghori",
+  teaType: "—",
+  brand: "ابو غوري",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 0, medium: 0, nosugar: 0 },
+  steepMinutes: { min: 20, max: 30 }
+},
+{
+  id: "ghadha-ahmar",
+  teaType: "—",
+  brand: "الغضا الأحمر",
+  teaPerLiterByTaste: { normal: 11, medium: 11.5, nosugar: 11 },
+  sugarPerLiterByTaste: { normal: 52, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "badeer",
+  teaType: "—",
+  brand: "البدير",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "kuwait-imports",
+  teaType: "—",
+  brand: "واردات الكويت",
+  teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 47, medium: 52, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "khaltat-abbas",
+  teaType: "—",
+  brand: "خلطة عباس",
+  teaPerLiterByTaste: { normal: 11, medium: 12, nosugar: 11 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "qimmah",
+  teaType: "—",
+  brand: "القمة",
+  teaPerLiterByTaste: { normal: 9.5, medium: 10.5, nosugar: 9.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "babel",
+  teaType: "—",
+  brand: "بابل",
+  teaPerLiterByTaste: { normal: 10, medium: 10.5, nosugar: 10 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "abu-jabal",
+  teaType: "—",
+  brand: "ابو جبل",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 9 },
+  sugarPerLiterByTaste: { normal: 53, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 30, max: 30 }
+},
+{
+  id: "dasman-hadid",
+  teaType: "—",
+  brand: "دسمان حديد",
+  teaPerLiterByTaste: { normal: 10, medium: 11, nosugar: 10 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "abu-tair",
+  teaType: "—",
+  brand: "ابو طير",
+  teaPerLiterByTaste: { normal: 9.5, medium: 10.5, nosugar: 9.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "awaleen",
+  teaType: "—",
+  brand: "الأولين",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "quality",
+  teaType: "—",
+  brand: "كوالتي",
+  teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "999",
+  teaType: "—",
+  brand: "999",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "jihan-sadah",
+  teaType: "—",
+  brand: "جيهان سادة",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 20 }
+},
+{
+  id: "zahrat-alshai",
+  teaType: "—",
+  brand: "زهرة الشاي",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 30, max: 30 }
+},
+{
+  id: "bentleyz",
+  teaType: "—",
+  brand: "بنتليز",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "tayi",
+  teaType: "—",
+  brand: "الطائي",
+  teaPerLiterByTaste: { normal: 13, medium: 13, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "khair",
+  teaType: "—",
+  brand: "الخير",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "ghazaleen",
+  teaType: "—",
+  brand: "الغزالين",
+  teaPerLiterByTaste: { normal: 13, medium: 13, nosugar: 13 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "kursi-dhahabi",
+  teaType: "—",
+  brand: "الكرسي الذهبي",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "wazzah-ustuwani",
+  teaType: "—",
+  brand: "الوزه اسطواني",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "surur",
+  teaType: "—",
+  brand: "السرور",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "rabee-hadid",
+  teaType: "—",
+  brand: "ربيع حديد",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "taho-saham-dhahabi",
+  teaType: "—",
+  brand: "التحو السهم الذهبي",
+  teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "karazah",
+  teaType: "—",
+  brand: "كرزة",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "wazzah-hadid-murabba",
+  teaType: "—",
+  brand: "الوزه حديد مربع",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "kashtah",
+  teaType: "—",
+  brand: "كشته",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 25, max: 30 }
+},
+{
+  id: "sangil",
+  teaType: "—",
+  brand: "سنقيل",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 30, max: 30 }
+},
+{
+  id: "wajar",
+  teaType: "—",
+  brand: "وجار",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "fadha-royal",
+  teaType: "—",
+  brand: "الفضا رويال",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 30, max: 30 }
+},
+{
+  id: "reston",
+  teaType: "—",
+  brand: "ريستون",
+  teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "ghamdan",
+  teaType: "—",
+  brand: "غمدان",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+{
+  id: "qarnas",
+  teaType: "—",
+  brand: "قرناس",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "511",
+  teaType: "—",
+  brand: "511",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "samman-hadid-dayri",
+  teaType: "—",
+  brand: "الصمان حديد دائري",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 },
+  steepMinutes: { min: 30, max: 30 }
+},
+{
+  id: "samman-hadid-murabba",
+  teaType: "—",
+  brand: "الصمان حديد مربع",
+  teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
+  sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 },
+  steepMinutes: { min: 25, max: 25 }
+},
+{
+  id: "ras-alhisan",
+  teaType: "—",
+  brand: "رأس الحصان",
+  teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
+  sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
+  steepMinutes: { min: 20, max: 25 }
+},
+  {
     id: "nahrain-op",
     teaType: "OP",
     brand: "شاي النهرين",
