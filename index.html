@@ -236,64 +236,64 @@
       <p class="sub">اختر طريقة الحساب، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر + مدة الخدرة + كم بيالة تكفي.</p>
 
       <div class="grid">
-        <div>
-          <label>طريقة الحساب</label>
-          <select id="modeSelect">
-            <option value="tea" selected>حسب نوع الشاي</option>
-            <option value="manual">حسب الوزنة اليدوية</option>
-          </select>
-          <div class="muted2">اختر من القائمة أو أدخل الوزنة بنفسك</div>
-        </div>
+  <div>
+    <label>طريقة الحساب</label>
+    <select id="modeSelect">
+      <option value="tea" selected>حسب نوع الشاي</option>
+      <option value="manual">حسب الوزنة اليدوية</option>
+    </select>
+    <div class="muted2">اختر من القائمة أو أدخل الوزنة بنفسك</div>
+  </div>
 
-        <div>
-          <label>كمية الماء (مل)</label>
-          <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
-          <div class="muted2">مثال: 400 أو 500 أو 1000</div>
-        </div>
+  <div id="teaModeBlock">
+    <label>بحث عن الشاي</label>
+    <input id="teaSearch" type="text" placeholder="اكتب اسم الشاي أو نوع الورق..." />
+    <div class="muted2">مثال: المنيس — نهرين — OP1</div>
 
-        <div id="teaModeBlock">
-          <label>بحث عن الشاي</label>
-          <input id="teaSearch" type="text" placeholder="اكتب اسم الشاي أو نوع الورق..." />
-          <div class="muted2">مثال: المنيس — نهرين — OP1</div>
+    <label style="margin-top:10px;">اختر الشاي</label>
+    <select id="teaSelect"></select>
+  </div>
 
-          <label style="margin-top:10px;">اختر الشاي</label>
-          <select id="teaSelect"></select>
-        </div>
+  <div id="typeWrap" class="hidden">
+    <label>نوع الورق</label>
+    <select id="typeSelect"></select>
+    <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
+  </div>
 
-        <div id="typeWrap" class="hidden">
-          <label>نوع الورق</label>
-          <select id="typeSelect"></select>
-          <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
-        </div>
+  <div>
+    <label>كمية الماء (مل)</label>
+    <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
+    <div class="muted2">مثال: 400 أو 500 أو 1000</div>
+  </div>
 
-        <div id="manualModeBlock" class="hidden">
-          <label>وزن الشاي لكل 1 لتر</label>
-          <input id="manualTeaPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 12" />
-          <div class="muted2">اكتب الوزنة اللي تعرفها لكل لتر</div>
-        </div>
+  <div>
+    <label>المذاق</label>
+    <select id="taste">
+      <option value="normal" selected>مناسب</option>
+      <option value="medium">متوسط</option>
+      <option value="nosugar">بدون سكر</option>
+    </select>
+    <div class="muted2" id="tasteHint"></div>
+  </div>
 
-        <div id="manualSugarWrap" class="hidden">
-          <label>السكر لكل 1 لتر (اختياري)</label>
-          <input id="manualSugarPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 50" />
-          <div class="muted2">إذا تركته فاضي، بيطلع بدون سكر</div>
-        </div>
+  <div id="manualModeBlock" class="hidden">
+    <label>وزن الشاي لكل 1 لتر</label>
+    <input id="manualTeaPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 12" />
+    <div class="muted2">اكتب الوزنة اللي تعرفها لكل لتر</div>
+  </div>
 
-        <div id="manualSteepWrap" class="hidden">
-          <label>مدة الخدرة (اختياري)</label>
-          <input id="manualSteepMinutes" type="text" placeholder="مثال: 20-25 دقيقة" />
-          <div class="muted2">تقدر تكتبها مثل: 20-25 دقيقة أو 30 دقيقة</div>
-        </div>
+  <div id="manualSugarWrap" class="hidden">
+    <label>السكر لكل 1 لتر (اختياري)</label>
+    <input id="manualSugarPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 50" />
+    <div class="muted2">إذا تركته فاضي، بيطلع بدون سكر</div>
+  </div>
 
-        <div>
-          <label>المذاق</label>
-          <select id="taste">
-            <option value="normal" selected>مناسب</option>
-            <option value="medium">متوسط</option>
-            <option value="nosugar">بدون سكر</option>
-          </select>
-          <div class="muted2" id="tasteHint"></div>
-        </div>
-      </div>
+  <div id="manualSteepWrap" class="hidden">
+    <label>مدة الخدرة (اختياري)</label>
+    <input id="manualSteepMinutes" type="text" placeholder="مثال: 20-25 دقيقة" />
+    <div class="muted2">تقدر تكتبها مثل: 20-25 دقيقة أو 30 دقيقة</div>
+  </div>
+</div>
 
       <div class="out" id="output" aria-live="polite"></div>
     </div>
