@@ -235,10 +235,9 @@
       <h1>خدرة شاي ☕</h1>
       <p class="sub">اختر طريقة الحساب، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر + مدة الخدرة + كم بيالة تكفي.</p>
 
-<div>
-  <label>طريقة الحساب</label>
-  ...
-</div>
+<div class="grid">
+  <div style="grid-column: span 2;">
+    <label>طريقة الحساب</label>
     <select id="modeSelect">
       <option value="tea" selected>حسب نوع الشاي</option>
       <option value="manual">حسب الوزنة اليدوية</option>
@@ -246,7 +245,7 @@
     <div class="muted2">اختر من القائمة أو أدخل الوزنة بنفسك</div>
   </div>
 
-  <div id="teaModeBlock">
+  <div id="teaModeBlock" style="grid-column: span 2;">
     <label>بحث عن الشاي</label>
     <input id="teaSearch" type="text" placeholder="اكتب اسم الشاي أو نوع الورق..." />
     <div class="muted2">مثال: المنيس — نهرين — OP1</div>
