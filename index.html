@@ -221,13 +221,63 @@
       stroke-width: 1.7;
       opacity: 0.9;
     }
+
+    .tea-picker {
+      position: relative;
+    }
+
+    .clear-btn {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: #edf7f1;
+      cursor: pointer;
+      display: none;
+      line-height: 24px;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    .tea-results {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      left: 0;
+      background: rgba(28, 51, 44, 0.98);
+      border: 1px solid rgba(196, 220, 208, 0.12);
+      border-radius: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .tea-result-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background .15s ease;
+    }
+
+    .tea-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .tea-result-item:hover {
+      background: rgba(255,255,255,0.08);
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="card">
-
       <div class="logo-wrap">
         <img src="icon.png" alt="خدرة شاي">
       </div>
@@ -235,98 +285,68 @@
       <h1>خدرة شاي ☕</h1>
       <p class="sub">اختر طريقة الحساب، وحط كمية الماء بالمل… وتطلع لك وزنية الشاي + السكر + مدة الخدرة + كم بيالة تكفي.</p>
 
-<div class="grid">
-  <div style="grid-column: span 2;">
-    <label>طريقة الحساب</label>
-    <select id="modeSelect">
-      <option value="tea" selected>حسب نوع الشاي</option>
-      <option value="manual">حسب الوزنة اليدوية</option>
-    </select>
-    <div class="muted2">اختر من القائمة أو أدخل الوزنة بنفسك</div>
-  </div>
+      <div class="grid">
+        <div style="grid-column: span 2;">
+          <label>طريقة الحساب</label>
+          <select id="modeSelect">
+            <option value="tea" selected>حسب نوع الشاي</option>
+            <option value="manual">حسب الوزنة اليدوية</option>
+          </select>
+          <div class="muted2">اختر من القائمة أو أدخل الوزنة بنفسك</div>
+        </div>
 
-<div id="teaModeBlock" style="grid-column: span 2;">
-  <label>اختر الشاي</label>
+        <div id="teaModeBlock" style="grid-column: span 2;">
+          <label>اختر الشاي</label>
 
-<div style="position: relative;">
-  <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو اختار من القائمة..." style="padding-left:44px;" />
+          <div class="tea-picker">
+            <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو اختار من القائمة..." style="padding-left:44px;" />
+            <button id="clearTeaSearch" class="clear-btn" type="button">×</button>
+            <div id="teaResults" class="tea-results"></div>
+          </div>
 
-  <button id="clearTeaSearch" type="button" style="
-    position:absolute;
-    left:10px;
-    top:10px;
-    width:24px;
-    height:24px;
-    border:none;
-    border-radius:999px;
-    background:rgba(255,255,255,0.08);
-    color:#edf7f1;
-    cursor:pointer;
-    display:none;
-    line-height:24px;
-    padding:0;
-    font-size:14px;
-  ">×</button>
+          <select id="teaSelect" style="display:none;"></select>
+        </div>
 
-  <div id="teaResults" style="
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    background: rgba(28, 51, 44, 0.95);
-    border: 1px solid rgba(196, 220, 208, 0.12);
-    border-radius: 12px;
-    margin-top: 6px;
-    max-height: 220px;
-    overflow-y: auto;
-    display: none;
-    z-index: 100;
-  "></div>
-</div>
+        <div id="typeWrap" class="hidden">
+          <label>نوع الورق</label>
+          <select id="typeSelect"></select>
+          <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
+        </div>
 
-  <select id="teaSelect" style="display:none;"></select>
-</div>
+        <div>
+          <label>كمية الماء (مل)</label>
+          <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
+          <div class="muted2">مثال: 400 أو 500 أو 1000</div>
+        </div>
 
-  <div id="typeWrap" class="hidden">
-    <label>نوع الورق</label>
-    <select id="typeSelect"></select>
-    <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
-  </div>
+        <div>
+          <label>المذاق</label>
+          <select id="taste">
+            <option value="normal" selected>مناسب</option>
+            <option value="medium">متوسط</option>
+            <option value="nosugar">بدون سكر</option>
+          </select>
+          <div class="muted2" id="tasteHint"></div>
+        </div>
 
-  <div>
-    <label>كمية الماء (مل)</label>
-    <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
-    <div class="muted2">مثال: 400 أو 500 أو 1000</div>
-  </div>
+        <div id="manualModeBlock" class="hidden">
+          <label>وزن الشاي لكل 1 لتر</label>
+          <input id="manualTeaPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 12" />
+          <div class="muted2">اكتب الوزنة اللي تعرفها لكل لتر</div>
+        </div>
 
-  <div>
-    <label>المذاق</label>
-    <select id="taste">
-      <option value="normal" selected>مناسب</option>
-      <option value="medium">متوسط</option>
-      <option value="nosugar">بدون سكر</option>
-    </select>
-    <div class="muted2" id="tasteHint"></div>
-  </div>
+        <div id="manualSugarWrap" class="hidden">
+          <label>السكر لكل 1 لتر (اختياري)</label>
+          <input id="manualSugarPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 50" />
+          <div class="muted2">إذا تركته فاضي، بيطلع بدون سكر</div>
+        </div>
 
-  <div id="manualModeBlock" class="hidden">
-    <label>وزن الشاي لكل 1 لتر</label>
-    <input id="manualTeaPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 12" />
-    <div class="muted2">اكتب الوزنة اللي تعرفها لكل لتر</div>
-  </div>
-
-  <div id="manualSugarWrap" class="hidden">
-    <label>السكر لكل 1 لتر (اختياري)</label>
-    <input id="manualSugarPerLiter" type="number" inputmode="decimal" min="0" step="0.1" placeholder="مثال: 50" />
-    <div class="muted2">إذا تركته فاضي، بيطلع بدون سكر</div>
-  </div>
-
-  <div id="manualSteepWrap" class="hidden">
-    <label>مدة الخدرة (اختياري)</label>
-    <input id="manualSteepMinutes" type="text" placeholder="مثال: 20-25 دقيقة" />
-    <div class="muted2">تقدر تكتبها مثل: 20-25 دقيقة أو 30 دقيقة</div>
-  </div>
-</div>
+        <div id="manualSteepWrap" class="hidden">
+          <label>مدة الخدرة (اختياري)</label>
+          <input id="manualSteepMinutes" type="text" placeholder="مثال: 20-25 دقيقة" />
+          <div class="muted2">تقدر تكتبها مثل: 20-25 دقيقة أو 30 دقيقة</div>
+        </div>
+      </div>
 
       <div class="out" id="output" aria-live="polite"></div>
     </div>
@@ -334,423 +354,58 @@
 
 <script>
 const SIMPLE_TEAS = [
-  {
-    id: "nahrain-op",
-    teaType: "OP",
-    brand: "شاي النهرين",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "naif-op1",
-    teaType: "OP1",
-    brand: "شاي نايف",
-    teaPerLiterByTaste: { normal: 14, medium: 14, nosugar: 14 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 30, max: 35 }
-  },
-
-  {
-    id: "musmak",
-    teaType: "",
-    brand: "المصمك",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 48, medium: 58, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "twinings",
-    teaType: "",
-    brand: "تويننجز",
-    teaPerLiterByTaste: { normal: 10.5, medium: 12, nosugar: 10.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 20, max: 30 }
-  },
-  {
-    id: "sankin",
-    teaType: "",
-    brand: "سنكين",
-    teaPerLiterByTaste: { normal: 10.5, medium: 12, nosugar: 10.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 20, max: 30 }
-  },
-  {
-    id: "hout-ahmar",
-    teaType: "",
-    brand: "الحوت الأحمر",
-    teaPerLiterByTaste: { normal: 10.5, medium: 10.5, nosugar: 9.5 },
-    sugarPerLiterByTaste: { normal: 53, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "muqaddam",
-    teaType: "",
-    brand: "المقدم",
-    teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "dahna",
-    teaType: "",
-    brand: "الدهناء",
-    teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "tolay",
-    teaType: "",
-    brand: "تولاي",
-    teaPerLiterByTaste: { normal: 13, medium: 14, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 60, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "bin-mangash",
-    teaType: "",
-    brand: "بن منقاش",
-    teaPerLiterByTaste: { normal: 13, medium: 14, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 48, medium: 58, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "fakham-bop1",
-    teaType: "BOP1",
-    brand: "الفخم",
-    teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "istiknan",
-    teaType: "",
-    brand: "استكنان",
-    teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 48, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "hub-wadahn",
-    teaType: "",
-    brand: "حب ودهن",
-    teaPerLiterByTaste: { normal: 12, medium: 15, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "ceylon",
-    teaType: "",
-    brand: "سيلان",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "mazad",
-    teaType: "",
-    brand: "المزاد",
-    teaPerLiterByTaste: { normal: 11, medium: 11, nosugar: 11 },
-    sugarPerLiterByTaste: { normal: 48, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "abu-ghori",
-    teaType: "",
-    brand: "ابو غوري",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 0, medium: 0, nosugar: 0 },
-    steepMinutes: { min: 20, max: 30 }
-  },
-  {
-    id: "ghadha-ahmar",
-    teaType: "",
-    brand: "الغضا الأحمر",
-    teaPerLiterByTaste: { normal: 11, medium: 11.5, nosugar: 11 },
-    sugarPerLiterByTaste: { normal: 52, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "badeer",
-    teaType: "",
-    brand: "البدير",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "kuwait-imports",
-    teaType: "",
-    brand: "واردات الكويت",
-    teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 47, medium: 52, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "khaltat-abbas",
-    teaType: "",
-    brand: "خلطة عباس",
-    teaPerLiterByTaste: { normal: 11, medium: 12, nosugar: 11 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "qimmah",
-    teaType: "",
-    brand: "القمة",
-    teaPerLiterByTaste: { normal: 9.5, medium: 10.5, nosugar: 9.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "babel",
-    teaType: "",
-    brand: "بابل",
-    teaPerLiterByTaste: { normal: 10, medium: 10.5, nosugar: 10 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "abu-jabal",
-    teaType: "",
-    brand: "ابو جبل",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 9 },
-    sugarPerLiterByTaste: { normal: 53, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 30, max: 30 }
-  },
-  {
-    id: "dasman-hadid",
-    teaType: "",
-    brand: "دسمان حديد",
-    teaPerLiterByTaste: { normal: 10, medium: 11, nosugar: 10 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "abu-tair",
-    teaType: "",
-    brand: "ابو طير",
-    teaPerLiterByTaste: { normal: 9.5, medium: 10.5, nosugar: 9.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "awaleen",
-    teaType: "",
-    brand: "الأولين",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "quality",
-    teaType: "",
-    brand: "كوالتي",
-    teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "999",
-    teaType: "",
-    brand: "999",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "jihan-sadah",
-    teaType: "",
-    brand: "جيهان سادة",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 20 }
-  },
-  {
-    id: "zahrat-alshai",
-    teaType: "",
-    brand: "زهرة الشاي",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 30, max: 30 }
-  },
-  {
-    id: "bentleyz",
-    teaType: "",
-    brand: "بنتليز",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "tayi",
-    teaType: "",
-    brand: "الطائي",
-    teaPerLiterByTaste: { normal: 13, medium: 13, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "khair",
-    teaType: "",
-    brand: "الخير",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "ghazaleen",
-    teaType: "",
-    brand: "الغزالين",
-    teaPerLiterByTaste: { normal: 13, medium: 13, nosugar: 13 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "kursi-dhahabi",
-    teaType: "",
-    brand: "الكرسي الذهبي",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "wazzah-ustuwani",
-    teaType: "",
-    brand: "الوزه اسطواني",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "surur",
-    teaType: "",
-    brand: "السرور",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "rabee-hadid",
-    teaType: "",
-    brand: "ربيع حديد",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "taho-saham-dhahabi",
-    teaType: "",
-    brand: "التحو السهم الذهبي",
-    teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "karazah",
-    teaType: "",
-    brand: "كرزة",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "wazzah-hadid-murabba",
-    teaType: "",
-    brand: "الوزه حديد مربع",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "kashtah",
-    teaType: "",
-    brand: "كشته",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 25, max: 30 }
-  },
-  {
-    id: "sangil",
-    teaType: "",
-    brand: "سنقيل",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 30, max: 30 }
-  },
-  {
-    id: "wajar",
-    teaType: "",
-    brand: "وجار",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "fadha-royal",
-    teaType: "",
-    brand: "الفضا رويال",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 30, max: 30 }
-  },
-  {
-    id: "reston",
-    teaType: "",
-    brand: "ريستون",
-    teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "ghamdan",
-    teaType: "",
-    brand: "غمدان",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  },
-  {
-    id: "qarnas",
-    teaType: "",
-    brand: "قرناس",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "511",
-    teaType: "",
-    brand: "511",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "samman-hadid-dayri",
-    teaType: "",
-    brand: "الصمان حديد دائري",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 },
-    steepMinutes: { min: 30, max: 30 }
-  },
-  {
-    id: "samman-hadid-murabba",
-    teaType: "",
-    brand: "الصمان حديد مربع",
-    teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 },
-    sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 },
-    steepMinutes: { min: 25, max: 25 }
-  },
-  {
-    id: "ras-alhisan",
-    teaType: "",
-    brand: "رأس الحصان",
-    teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 },
-    sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 },
-    steepMinutes: { min: 20, max: 25 }
-  }
+  { id: "nahrain-op", teaType: "OP", brand: "شاي النهرين", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "naif-op1", teaType: "OP1", brand: "شاي نايف", teaPerLiterByTaste: { normal: 14, medium: 14, nosugar: 14 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 30, max: 35 } },
+  { id: "musmak", teaType: "", brand: "المصمك", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 48, medium: 58, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "twinings", teaType: "", brand: "تويننجز", teaPerLiterByTaste: { normal: 10.5, medium: 12, nosugar: 10.5 }, sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 }, steepMinutes: { min: 20, max: 30 } },
+  { id: "sankin", teaType: "", brand: "سنكين", teaPerLiterByTaste: { normal: 10.5, medium: 12, nosugar: 10.5 }, sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 }, steepMinutes: { min: 20, max: 30 } },
+  { id: "hout-ahmar", teaType: "", brand: "الحوت الأحمر", teaPerLiterByTaste: { normal: 10.5, medium: 10.5, nosugar: 9.5 }, sugarPerLiterByTaste: { normal: 53, medium: 60, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "muqaddam", teaType: "", brand: "المقدم", teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "dahna", teaType: "", brand: "الدهناء", teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "tolay", teaType: "", brand: "تولاي", teaPerLiterByTaste: { normal: 13, medium: 14, nosugar: 13 }, sugarPerLiterByTaste: { normal: 60, medium: 60, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "bin-mangash", teaType: "", brand: "بن منقاش", teaPerLiterByTaste: { normal: 13, medium: 14, nosugar: 13 }, sugarPerLiterByTaste: { normal: 48, medium: 58, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "fakham-bop1", teaType: "BOP1", brand: "الفخم", teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "istiknan", teaType: "", brand: "استكنان", teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 }, sugarPerLiterByTaste: { normal: 48, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "hub-wadahn", teaType: "", brand: "حب ودهن", teaPerLiterByTaste: { normal: 12, medium: 15, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "ceylon", teaType: "", brand: "سيلان", teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "mazad", teaType: "", brand: "المزاد", teaPerLiterByTaste: { normal: 11, medium: 11, nosugar: 11 }, sugarPerLiterByTaste: { normal: 48, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "abu-ghori", teaType: "", brand: "ابو غوري", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 0, medium: 0, nosugar: 0 }, steepMinutes: { min: 20, max: 30 } },
+  { id: "ghadha-ahmar", teaType: "", brand: "الغضا الأحمر", teaPerLiterByTaste: { normal: 11, medium: 11.5, nosugar: 11 }, sugarPerLiterByTaste: { normal: 52, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "badeer", teaType: "", brand: "البدير", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "kuwait-imports", teaType: "", brand: "واردات الكويت", teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 }, sugarPerLiterByTaste: { normal: 47, medium: 52, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "khaltat-abbas", teaType: "", brand: "خلطة عباس", teaPerLiterByTaste: { normal: 11, medium: 12, nosugar: 11 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "qimmah", teaType: "", brand: "القمة", teaPerLiterByTaste: { normal: 9.5, medium: 10.5, nosugar: 9.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "babel", teaType: "", brand: "بابل", teaPerLiterByTaste: { normal: 10, medium: 10.5, nosugar: 10 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "abu-jabal", teaType: "", brand: "ابو جبل", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 9 }, sugarPerLiterByTaste: { normal: 53, medium: 60, nosugar: 0 }, steepMinutes: { min: 30, max: 30 } },
+  { id: "dasman-hadid", teaType: "", brand: "دسمان حديد", teaPerLiterByTaste: { normal: 10, medium: 11, nosugar: 10 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "abu-tair", teaType: "", brand: "ابو طير", teaPerLiterByTaste: { normal: 9.5, medium: 10.5, nosugar: 9.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "awaleen", teaType: "", brand: "الأولين", teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "quality", teaType: "", brand: "كوالتي", teaPerLiterByTaste: { normal: 13, medium: 13.5, nosugar: 13 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "999", teaType: "", brand: "999", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "jihan-sadah", teaType: "", brand: "جيهان سادة", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 20 } },
+  { id: "zahrat-alshai", teaType: "", brand: "زهرة الشاي", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 30, max: 30 } },
+  { id: "bentleyz", teaType: "", brand: "بنتليز", teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "tayi", teaType: "", brand: "الطائي", teaPerLiterByTaste: { normal: 13, medium: 13, nosugar: 13 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "khair", teaType: "", brand: "الخير", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "ghazaleen", teaType: "", brand: "الغزالين", teaPerLiterByTaste: { normal: 13, medium: 13, nosugar: 13 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "kursi-dhahabi", teaType: "", brand: "الكرسي الذهبي", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "wazzah-ustuwani", teaType: "", brand: "الوزه اسطواني", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "surur", teaType: "", brand: "السرور", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "rabee-hadid", teaType: "", brand: "ربيع حديد", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "taho-saham-dhahabi", teaType: "", brand: "التحو السهم الذهبي", teaPerLiterByTaste: { normal: 12, medium: 13, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "karazah", teaType: "", brand: "كرزة", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "wazzah-hadid-murabba", teaType: "", brand: "الوزه حديد مربع", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "kashtah", teaType: "", brand: "كشته", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 25, max: 30 } },
+  { id: "sangil", teaType: "", brand: "سنقيل", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 30, max: 30 } },
+  { id: "wajar", teaType: "", brand: "وجار", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 60, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "fadha-royal", teaType: "", brand: "الفضا رويال", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 30, max: 30 } },
+  { id: "reston", teaType: "", brand: "ريستون", teaPerLiterByTaste: { normal: 11.5, medium: 12.5, nosugar: 11.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "ghamdan", teaType: "", brand: "غمدان", teaPerLiterByTaste: { normal: 12.5, medium: 13, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } },
+  { id: "qarnas", teaType: "", brand: "قرناس", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "511", teaType: "", brand: "511", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 53, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "samman-hadid-dayri", teaType: "", brand: "الصمان حديد دائري", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 }, steepMinutes: { min: 30, max: 30 } },
+  { id: "samman-hadid-murabba", teaType: "", brand: "الصمان حديد مربع", teaPerLiterByTaste: { normal: 12, medium: 12, nosugar: 12 }, sugarPerLiterByTaste: { normal: 50, medium: 50, nosugar: 0 }, steepMinutes: { min: 25, max: 25 } },
+  { id: "ras-alhisan", teaType: "", brand: "رأس الحصان", teaPerLiterByTaste: { normal: 12.5, medium: 13.5, nosugar: 12.5 }, sugarPerLiterByTaste: { normal: 50, medium: 55, nosugar: 0 }, steepMinutes: { min: 20, max: 25 } }
 ];
 
 const BRANDED_TEAS = [
@@ -771,42 +426,41 @@ const BRANDED_TEAS = [
 
 const CUP_ML = 100;
 
-function smartNumber(n){
+function smartNumber(n) {
   if (!Number.isFinite(n)) return "-";
   const isInt = Math.abs(n - Math.round(n)) < 1e-9;
   return isInt ? String(Math.round(n)) : n.toFixed(1);
 }
 
-function toLitersFromMl(ml){
+function toLitersFromMl(ml) {
   const v = Number(ml);
   if (!Number.isFinite(v) || v <= 0) return NaN;
   return v / 1000;
 }
 
-function minutesText(r){
+function minutesText(r) {
   if (!r) return "-";
   if (typeof r === "string") return r;
   if (r.min === r.max) return `${r.min} دقيقة`;
   return `${r.min} – ${r.max} دقيقة`;
 }
 
-function tasteLabel(v){
+function tasteLabel(v) {
   if (v === "medium") return "متوسط";
   if (v === "nosugar") return "بدون سكر";
   return "مناسب";
 }
 
 const modeSelect = document.getElementById("modeSelect");
-const teaSearch  = document.getElementById("teaSearch");
-const teaSelect  = document.getElementById("teaSelect");
-const typeWrap   = document.getElementById("typeWrap");
+const teaSearch = document.getElementById("teaSearch");
+const teaSelect = document.getElementById("teaSelect");
+const typeWrap = document.getElementById("typeWrap");
 const typeSelect = document.getElementById("typeSelect");
 const waterMlInp = document.getElementById("waterMl");
-const tasteSel   = document.getElementById("taste");
-const tasteHint  = document.getElementById("tasteHint");
-const output     = document.getElementById("output");
+const tasteSel = document.getElementById("taste");
+const tasteHint = document.getElementById("tasteHint");
+const output = document.getElementById("output");
 const clearTeaSearch = document.getElementById("clearTeaSearch");
-
 const teaResults = document.getElementById("teaResults");
 
 const teaModeBlock = document.getElementById("teaModeBlock");
@@ -821,26 +475,26 @@ const manualSteepMinutes = document.getElementById("manualSteepMinutes");
 function updateClearButton() {
   clearTeaSearch.style.display = teaSearch.value ? "block" : "none";
 }
+
+function populateMainSelect() {
   const current = teaSelect.value;
   teaSelect.innerHTML = "";
 
-  SIMPLE_TEAS.forEach(t => {
+  SIMPLE_TEAS.forEach((t) => {
     const opt = document.createElement("option");
     opt.value = `simple:${t.id}`;
-    opt.textContent = t.teaType && t.teaType !== "—"
-      ? `${t.brand} — ${t.teaType}`
-      : t.brand;
+    opt.textContent = t.teaType ? `${t.brand} — ${t.teaType}` : t.brand;
     teaSelect.appendChild(opt);
   });
 
-  BRANDED_TEAS.forEach(b => {
+  BRANDED_TEAS.forEach((b) => {
     const opt = document.createElement("option");
     opt.value = `brand:${b.brandId}`;
     opt.textContent = b.brand;
     teaSelect.appendChild(opt);
   });
 
-  const stillExists = Array.from(teaSelect.options).some(o => o.value === current);
+  const stillExists = Array.from(teaSelect.options).some((o) => o.value === current);
   if (stillExists) {
     teaSelect.value = current;
   } else if (teaSelect.options.length) {
@@ -854,21 +508,19 @@ function showResults(filterText = "") {
 
   const results = [];
 
-  SIMPLE_TEAS.forEach(t => {
+  SIMPLE_TEAS.forEach((t) => {
     const label = `${t.brand} ${t.teaType || ""}`.toLowerCase();
     if (!q || label.includes(q)) {
       results.push({
         id: t.id,
-        label: t.teaType && t.teaType !== "—"
-          ? `${t.brand} — ${t.teaType}`
-          : t.brand,
+        label: t.teaType ? `${t.brand} — ${t.teaType}` : t.brand,
         type: "simple"
       });
     }
   });
 
-  BRANDED_TEAS.forEach(b => {
-    b.items.forEach(it => {
+  BRANDED_TEAS.forEach((b) => {
+    b.items.forEach((it) => {
       const label = `${b.brand} ${it.teaType}`.toLowerCase();
       if (!q || label.includes(q)) {
         results.push({
@@ -881,69 +533,36 @@ function showResults(filterText = "") {
     });
   });
 
-  if (results.length === 0) {
+  if (!results.length) {
     teaResults.style.display = "none";
     return;
   }
 
-  results.forEach(r => {
+  results.forEach((r) => {
     const item = document.createElement("div");
+    item.className = "tea-result-item";
     item.textContent = r.label;
-    item.style.padding = "10px";
-    item.style.cursor = "pointer";
-    item.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
 
-    item.onmouseenter = () => item.style.background = "rgba(255,255,255,0.08)";
-    item.onmouseleave = () => item.style.background = "transparent";
+    item.onclick = () => {
+      teaSearch.value = r.label;
+      teaResults.style.display = "none";
+      updateClearButton();
 
-item.onclick = () => {
-  teaSearch.value = r.label;
-  teaResults.style.display = "none";
-  teaSearch.blur();
-  updateClearButton();
+      if (r.type === "simple") {
+        teaSelect.value = `simple:${r.id}`;
+        typeWrap.classList.add("hidden");
+        render();
+        return;
+      }
 
-  if (r.type === "simple") {
-    teaSelect.value = "simple:" + r.id;
-    typeWrap.classList.add("hidden");
-    render();
-    return;
-  }
-
-  if (r.type === "brand") {
-    teaSelect.value = "brand:" + r.brandId;
-    render();
-
-    setTimeout(() => {
-      typeSelect.value = r.id;
+      teaSelect.value = `brand:${r.brandId}`;
       render();
-    }, 0);
-  }
-};
-  teaSearch.value = r.label;
-  teaResults.style.display = "none";
-  teaSearch.blur();
 
-  if (selectedTeaDiv) {
-    selectedTeaDiv.textContent = `تم اختيار: ${r.label}`;
-  }
-
-  if (r.type === "simple") {
-    teaSelect.value = "simple:" + r.id;
-    typeWrap.classList.add("hidden");
-    render();
-    return;
-  }
-
-  if (r.type === "brand") {
-    teaSelect.value = "brand:" + r.brandId;
-    render();
-
-    setTimeout(() => {
-      typeSelect.value = r.id;
-      render();
-    }, 0);
-  }
-};
+      setTimeout(() => {
+        typeSelect.value = r.id;
+        render();
+      }, 0);
+    };
 
     teaResults.appendChild(item);
   });
@@ -962,52 +581,44 @@ function updateModeUI() {
 
   if (isManual) {
     teaResults.style.display = "none";
-    selectedTeaDiv.textContent = "";
   }
 
   render();
 }
 
-function getSelectedTeaObject(){
+function getSelectedTeaObject() {
   const val = teaSelect.value || "";
   const taste = tasteSel.value;
 
   if (val.startsWith("simple:")) {
     const id = val.replace("simple:", "");
-    const tea = SIMPLE_TEAS.find(x => x.id === id) || SIMPLE_TEAS[0];
+    const tea = SIMPLE_TEAS.find((x) => x.id === id) || SIMPLE_TEAS[0];
 
     typeWrap.classList.add("hidden");
-
-    const teaPerLiterPicked = tea.teaPerLiterByTaste
-      ? Number(tea.teaPerLiterByTaste[taste])
-      : 0;
-
-    const sugarPerLiterPicked = tea.sugarPerLiterByTaste
-      ? Number(tea.sugarPerLiterByTaste[taste] || 0)
-      : 0;
 
     return {
       brandLabel: tea.brand,
       teaType: tea.teaType,
-      teaPerLiterPicked,
-      sugarPerLiterPicked,
+      teaPerLiterPicked: Number(tea.teaPerLiterByTaste[taste]),
+      sugarPerLiterPicked: Number(tea.sugarPerLiterByTaste[taste] || 0),
       steepMinutes: tea.steepMinutes
     };
   }
 
   if (val.startsWith("brand:")) {
     const brandId = val.replace("brand:", "");
-    const brand = BRANDED_TEAS.find(b => b.brandId === brandId) || BRANDED_TEAS[0];
+    const brand = BRANDED_TEAS.find((b) => b.brandId === brandId) || BRANDED_TEAS[0];
 
     typeWrap.classList.remove("hidden");
 
-    const existingIds = Array.from(typeSelect.options).map(o => o.value);
-    const shouldRebuild = existingIds.length !== brand.items.length ||
-      (existingIds[0] && !brand.items.some(it => it.id === existingIds[0]));
+    const existingIds = Array.from(typeSelect.options).map((o) => o.value);
+    const shouldRebuild =
+      existingIds.length !== brand.items.length ||
+      (existingIds[0] && !brand.items.some((it) => it.id === existingIds[0]));
 
     if (shouldRebuild) {
       typeSelect.innerHTML = "";
-      brand.items.forEach(it => {
+      brand.items.forEach((it) => {
         const opt = document.createElement("option");
         opt.value = it.id;
         opt.textContent = it.teaType;
@@ -1016,16 +627,13 @@ function getSelectedTeaObject(){
       typeSelect.value = brand.items[0].id;
     }
 
-    const selectedItem = brand.items.find(it => it.id === typeSelect.value) || brand.items[0];
-
-    const teaPerLiterPicked = Number(selectedItem.teaPerLiterByTaste[taste]);
-    const sugarPerLiterPicked = Number(selectedItem.sugarPerLiterByTaste[taste] || 0);
+    const selectedItem = brand.items.find((it) => it.id === typeSelect.value) || brand.items[0];
 
     return {
       brandLabel: brand.brand,
       teaType: selectedItem.teaType,
-      teaPerLiterPicked,
-      sugarPerLiterPicked,
+      teaPerLiterPicked: Number(selectedItem.teaPerLiterByTaste[taste]),
+      sugarPerLiterPicked: Number(selectedItem.sugarPerLiterByTaste[taste] || 0),
       steepMinutes: selectedItem.steepMinutes
     };
   }
@@ -1055,11 +663,10 @@ function getManualTeaObject() {
 }
 
 function getCurrentTeaObject() {
-  if (modeSelect.value === "manual") return getManualTeaObject();
-  return getSelectedTeaObject();
+  return modeSelect.value === "manual" ? getManualTeaObject() : getSelectedTeaObject();
 }
 
-function getResultText(){
+function getResultText() {
   const liters = toLitersFromMl(waterMlInp.value);
   if (!Number.isFinite(liters)) return "";
 
@@ -1067,9 +674,11 @@ function getResultText(){
   if (!teaObj) return "";
 
   const tasteText = tasteLabel(tasteSel.value);
-  const teaTypeText = teaObj.teaType && teaObj.teaType !== "—" ? ` — ${teaObj.teaType}` : "";
+  const teaTypeText = teaObj.teaType ? ` — ${teaObj.teaType}` : "";
   const teaGrams = smartNumber(teaObj.teaPerLiterPicked * liters);
-  const sugarText = teaObj.sugarPerLiterPicked === 0 ? "بدون سكر" : (smartNumber(teaObj.sugarPerLiterPicked * liters) + " جم");
+  const sugarText = teaObj.sugarPerLiterPicked === 0
+    ? "بدون سكر"
+    : `${smartNumber(teaObj.sugarPerLiterPicked * liters)} جم`;
   const cups = Number(waterMlInp.value) / CUP_ML;
 
   return `
@@ -1084,7 +693,7 @@ ${teaObj.brandLabel}${teaTypeText}
 `.trim();
 }
 
-function bindActionButtons(){
+function bindActionButtons() {
   const copyBtn = document.getElementById("copyBtn");
   const waBtn = document.getElementById("waBtn");
 
@@ -1095,7 +704,7 @@ function bindActionButtons(){
 
       try {
         await navigator.clipboard.writeText(text);
-      } catch (e) {
+      } catch {
         const ta = document.createElement("textarea");
         ta.value = text;
         ta.style.position = "fixed";
@@ -1107,7 +716,9 @@ function bindActionButtons(){
       }
 
       copyBtn.textContent = "تم النسخ ✓";
-      setTimeout(() => copyBtn.textContent = "نسخ النتيجة", 1500);
+      setTimeout(() => {
+        copyBtn.textContent = "نسخ النتيجة";
+      }, 1500);
     };
   }
 
@@ -1120,7 +731,7 @@ function bindActionButtons(){
   }
 }
 
-function render(){
+function render() {
   try {
     const liters = toLitersFromMl(waterMlInp.value);
     if (!Number.isFinite(liters)) {
@@ -1129,24 +740,21 @@ function render(){
     }
 
     const teaObj = getCurrentTeaObject();
-
     if (!teaObj) {
       output.innerHTML = `⚠️ أدخل وزنة الشاي لكل لتر أو اختر نوع شاي من القائمة.`;
       return;
     }
 
-    const taste = tasteSel.value;
-
-    // نخفي النص المربك تحت المذاق
     tasteHint.textContent = "";
 
+    const taste = tasteSel.value;
     const teaGrams = teaObj.teaPerLiterPicked * liters;
-    const sugarGrams = teaObj.sugarPerLiterPicked === 0 ? 0 : (teaObj.sugarPerLiterPicked * liters);
+    const sugarGrams = teaObj.sugarPerLiterPicked === 0 ? 0 : teaObj.sugarPerLiterPicked * liters;
 
     const waterMl = Number(waterMlInp.value);
-    const cups = (Number.isFinite(waterMl) && waterMl > 0) ? (waterMl / CUP_ML) : NaN;
-    const sugarText = (teaObj.sugarPerLiterPicked === 0) ? "بدون سكر" : `${smartNumber(sugarGrams)} جم`;
-    const teaTypeText = teaObj.teaType && teaObj.teaType !== "—" ? ` — ${teaObj.teaType}` : "";
+    const cups = Number.isFinite(waterMl) && waterMl > 0 ? waterMl / CUP_ML : NaN;
+    const sugarText = teaObj.sugarPerLiterPicked === 0 ? "بدون سكر" : `${smartNumber(sugarGrams)} جم`;
+    const teaTypeText = teaObj.teaType ? ` — ${teaObj.teaType}` : "";
 
     output.innerHTML = `
       <div class="kpi">
@@ -1198,7 +806,6 @@ function render(){
   }
 }
 
-/* events */
 teaSearch.addEventListener("input", () => {
   updateClearButton();
   showResults(teaSearch.value);
@@ -1219,14 +826,6 @@ clearTeaSearch.addEventListener("click", () => {
   teaSearch.focus();
 });
 
-teaSearch.addEventListener("focus", () => {
-  showResults(teaSearch.value);
-});
-
-teaSearch.addEventListener("click", () => {
-  showResults(teaSearch.value);
-});
-
 document.addEventListener("click", (e) => {
   if (!teaModeBlock.contains(e.target)) {
     teaResults.style.display = "none";
@@ -1243,11 +842,8 @@ manualTeaPerLiter.addEventListener("input", render);
 manualSugarPerLiter.addEventListener("input", render);
 manualSteepMinutes.addEventListener("input", render);
 
-/* init */
 populateMainSelect();
 updateClearButton();
-updateModeUI();
-render();
 updateModeUI();
 render();
 </script>
