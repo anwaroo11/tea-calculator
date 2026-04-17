@@ -333,15 +333,23 @@ body {
           <div class="muted2">مثال: 400 أو 500 أو 1000</div>
         </div>
 
-        <div>
-          <label>المذاق</label>
-          <select id="taste">
-            <option value="normal" selected>مناسب</option>
-            <option value="medium">متوسط</option>
-            <option value="nosugar">بدون سكر</option>
-          </select>
-          <div class="muted2" id="tasteHint"></div>
-        </div>
+  <div id="tasteWrap">
+
+  <label>المذاق</label>
+
+  <select id="taste">
+
+    <option value="normal" selected>مناسب</option>
+
+    <option value="medium">متوسط</option>
+
+    <option value="nosugar">بدون سكر</option>
+
+  </select>
+
+  <div class="muted2" id="tasteHint"></div>
+
+</div>
 
         <div id="manualModeBlock" class="hidden">
           <label>وزن الشاي لكل 1 لتر</label>
@@ -476,7 +484,7 @@ const tasteHint = document.getElementById("tasteHint");
 const output = document.getElementById("output");
 const clearTeaSearch = document.getElementById("clearTeaSearch");
 const teaResults = document.getElementById("teaResults");
-
+const tasteWrap = document.getElementById("tasteWrap");
 const teaModeBlock = document.getElementById("teaModeBlock");
 const manualModeBlock = document.getElementById("manualModeBlock");
 const manualSugarWrap = document.getElementById("manualSugarWrap");
@@ -592,6 +600,7 @@ function updateModeUI() {
   manualModeBlock.classList.toggle("hidden", !isManual);
   manualSugarWrap.classList.toggle("hidden", !isManual);
   manualSteepWrap.classList.toggle("hidden", !isManual);
+  tasteWrap.classList.toggle("hidden", isManual);
 
   if (isManual) {
     teaResults.style.display = "none";
