@@ -958,25 +958,53 @@ manualTeaPerLiter.addEventListener("input", render);
 manualSugarPerLiter.addEventListener("input", render);
 manualSteepMinutes.addEventListener("input", render);
 
-const waterBtns = document.querySelectorAll(".waterBtn");
-const customWaterBtn = document.getElementById("customWaterBtn");
+function setWaterPreset(value) {
+  water1000Btn.classList.remove("active");
+  water500Btn.classList.remove("active");
+  customWaterBtn.classList.remove("active");
+
+  waterMlInp.classList.add("hidden");
+  waterMlInp.classList.remove("active");
+  customWaterBtn.classList.remove("hidden");
+
+  if (value === 1000) {
+    water1000Btn.classList.add("active");
+    waterMlInp.value = "1000";
+  } else if (value === 500) {
+    water500Btn.classList.add("active");
+    waterMlInp.value = "500";
+  }
+
+  render();
+}
+
+water1000Btn.addEventListener("click", () => {
+  setWaterPreset(1000);
+});
+
+water500Btn.addEventListener("click", () => {
+  setWaterPreset(500);
+});
 
 customWaterBtn.addEventListener("click", () => {
-  waterBtns.forEach(b => b.classList.remove("active"));
-
+  water1000Btn.classList.remove("active");
+  water500Btn.classList.remove("active");
   customWaterBtn.classList.add("hidden");
+
   waterMlInp.classList.remove("hidden");
   waterMlInp.classList.add("active");
-
   waterMlInp.value = "";
   waterMlInp.focus();
+});
+
+waterMlInp.addEventListener("input", () => {
+  render();
 });
 
 waterMlInp.addEventListener("blur", () => {
   if (!waterMlInp.value) {
     waterMlInp.classList.add("hidden");
     waterMlInp.classList.remove("active");
-
     customWaterBtn.classList.remove("hidden");
     customWaterBtn.classList.add("active");
   }
