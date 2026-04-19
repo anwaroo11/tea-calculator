@@ -931,6 +931,7 @@ waterBtns.forEach(btn => {
     waterMlInp.value = val;
     render();
   });
+  
   // لما يضغط على input "أخرى"
 waterMlInp.addEventListener("focus", () => {
   waterBtns.forEach(b => b.classList.remove("active"));
@@ -941,6 +942,7 @@ waterMlInp.addEventListener("focus", () => {
 // لما يكتب رقم
 waterMlInp.addEventListener("input", () => {
   render();
+});
 });
 
 populateMainSelect();
