@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -15,25 +14,25 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-:root {
-  --bg: #9f6b41;
-  --card: rgba(108, 63, 33, 0.88);
-  --card-2: rgba(140, 86, 49, 0.82);
-  --border: rgba(255, 224, 190, 0.16);
-  --text: #fff4e8;
-  --muted: rgba(255, 244, 232, 0.72);
-  --input-bg: rgba(76, 43, 21, 0.35);
-  --btn-bg: rgba(255,255,255,0.08);
-  --btn-hover: rgba(255,255,255,0.14);
-  --shadow: 0 10px 30px rgba(0,0,0,.22);
-}
+    :root {
+      --bg: #9f6b41;
+      --card: rgba(108, 63, 33, 0.88);
+      --card-2: rgba(140, 86, 49, 0.82);
+      --border: rgba(255, 224, 190, 0.16);
+      --text: #fff4e8;
+      --muted: rgba(255, 244, 232, 0.72);
+      --input-bg: rgba(76, 43, 21, 0.35);
+      --btn-bg: rgba(255,255,255,0.08);
+      --btn-hover: rgba(255,255,255,0.14);
+      --shadow: 0 10px 30px rgba(0,0,0,.22);
+    }
 
-body {
-  margin: 0;
-  background: linear-gradient(180deg, #b87a48 0%, #8f5b33 100%);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
-}
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #b87a48 0%, #8f5b33 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
+    }
 
     .wrap {
       max-width: 1100px;
@@ -81,7 +80,7 @@ body {
       grid-template-columns: 1fr;
     }
 
-    @media (min-width: 780px){
+    @media (min-width: 780px) {
       .grid { grid-template-columns: 1fr 1fr; }
     }
 
@@ -108,11 +107,15 @@ body {
     }
 
     select:focus, input:focus {
-      border-color: rgba(180, 223, 198, 0.38);
-      box-shadow: 0 0 0 3px rgba(180, 223, 198, 0.08);
+      border-color: rgba(255, 210, 166, 0.38);
+      box-shadow: 0 0 0 3px rgba(255, 210, 166, 0.12);
     }
 
-    input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+    input[type=number] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -125,11 +128,13 @@ body {
     }
 
     input::placeholder {
-      opacity: .6;
-      color: rgba(237, 247, 241, 0.7);
+      opacity: .7;
+      color: rgba(255, 244, 232, 0.7);
     }
 
-    .hidden { display: none !important; }
+    .hidden {
+      display: none !important;
+    }
 
     .out {
       margin-top: 14px;
@@ -147,11 +152,11 @@ body {
       grid-template-columns: 1fr;
     }
 
-    @media (min-width: 780px){
+    @media (min-width: 780px) {
       .kpi { grid-template-columns: 1fr 1fr; }
     }
 
-    @media (min-width: 1024px){
+    @media (min-width: 1024px) {
       .kpi { grid-template-columns: 1fr 1fr 1fr 1fr; }
     }
 
@@ -244,33 +249,20 @@ body {
       font-size: 14px;
     }
 
-.tea-results {
-
-  position: absolute;
-
-  top: calc(100% + 6px);
-
-  right: 0;
-
-  left: 0;
-
-  background: var(--card);
-
-  border: 1px solid var(--border);
-
-  border-radius: 12px;
-
-  max-height: 220px;
-
-  overflow-y: auto;
-
-  display: none;
-
-  z-index: 100;
-
-  box-shadow: var(--shadow);
-
-}
+    .tea-results {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      left: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
 
     .tea-result-item {
       padding: 10px 12px;
@@ -286,65 +278,38 @@ body {
     .tea-result-item:hover {
       background: rgba(255,244,232,0.08);
     }
+
     .water-options {
-  display: flex;
-  gap: 8px;
-}
+      display: flex;
+      gap: 8px;
+    }
 
-.waterBtn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--btn-bg);
-  color: var(--text);
-  cursor: pointer;
-  transition: all .2s ease;
-}
+    .waterBtn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--btn-bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all .2s ease;
+      text-align: center;
+      height: 48px;
+      box-sizing: border-box;
+    }
 
-.waterBtn.active {
-  background: rgba(255, 210, 166, 0.2);
-  border-color: rgba(255, 210, 166, 0.4);
-}
+    .waterBtn.active {
+      background: rgba(255, 210, 166, 0.2);
+      border-color: rgba(255, 210, 166, 0.4);
+    }
 
-.waterBtn:hover {
-  transform: translateY(-2px);
-}
-.customInput {
-  text-align: center;
-  border: 1px dashed var(--border);
-}
-.water-options {
-  display: flex;
-  gap: 8px;
-}
+    .waterBtn:hover {
+      transform: translateY(-2px);
+    }
 
-.waterBtn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--btn-bg);
-  color: var(--text);
-  cursor: pointer;
-  transition: all .2s ease;
-  text-align: center;
-  height: 48px;
-  box-sizing: border-box;
-}
-
-.waterBtn.active {
-  background: rgba(255, 210, 166, 0.2);
-  border-color: rgba(255, 210, 166, 0.4);
-}
-
-.customInput {
-  border: 1px dashed var(--border);
-}
-
-.hidden {
-  display: none !important;
-}
+    .customInput {
+      border: 1px dashed var(--border);
+    }
   </style>
 </head>
 
@@ -356,7 +321,7 @@ body {
       </div>
 
       <h1>خدرة شاي ☕</h1>
-      <p class="sub">احسب وزنية الشاي بسهولة - اختر نوع الشاي او ادخل الوزنية بنفسك مع تحديد كمية الماء.</p>
+      <p class="sub" id="dynamicText">اختر نوع الشاي وحدد كمية الماء</p>
 
       <div class="grid">
         <div style="grid-column: span 2;">
@@ -370,13 +335,11 @@ body {
 
         <div id="teaModeBlock" style="grid-column: span 2;">
           <label>اختر الشاي</label>
-
           <div class="tea-picker">
             <input id="teaSearch" type="text" placeholder="ابحث عن الشاي أو اختار من القائمة..." style="padding-left:44px;" />
             <button id="clearTeaSearch" class="clear-btn" type="button">×</button>
             <div id="teaResults" class="tea-results"></div>
           </div>
-
           <select id="teaSelect" style="display:none;"></select>
         </div>
 
@@ -386,44 +349,33 @@ body {
           <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
         </div>
 
-<div>
-  <label>كمية الماء (مل)</label>
+        <div>
+          <label>كمية الماء (مل)</label>
+          <div id="waterOptions" class="water-options">
+            <button type="button" id="water1000" class="waterBtn active">1000 مل</button>
+            <button type="button" id="water500" class="waterBtn">500 مل</button>
+            <button type="button" id="customWaterBtn" class="waterBtn">أخرى</button>
+            <input
+              id="waterMl"
+              class="waterBtn customInput hidden"
+              type="number"
+              inputmode="decimal"
+              min="1"
+              placeholder="مثلاً 780"
+            />
+          </div>
+          <div class="muted2">اختر سريع أو أدخل الكمية بنفسك</div>
+        </div>
 
-  <div id="waterOptions" class="water-options">
-    <button type="button" id="water1000" class="waterBtn active">1000 مل</button>
-    <button type="button" id="water500" class="waterBtn">500 مل</button>
-    <button type="button" id="customWaterBtn" class="waterBtn">أخرى</button>
-
-    <input
-      id="waterMl"
-      class="waterBtn customInput hidden"
-      type="number"
-      inputmode="decimal"
-      min="1"
-      placeholder="مثلاً 780"
-    />
-  </div>
-
-  <div class="muted2">اختر سريع أو أدخل الكمية بنفسك</div>
-</div>
-
-  <div id="tasteWrap">
-
-  <label>المذاق</label>
-
-  <select id="taste">
-
-    <option value="normal" selected>مناسب</option>
-
-    <option value="medium">متوسط</option>
-
-    <option value="nosugar">بدون سكر</option>
-
-  </select>
-
-  <div class="muted2" id="tasteHint"></div>
-
-</div>
+        <div id="tasteWrap">
+          <label>المذاق</label>
+          <select id="taste">
+            <option value="normal" selected>مناسب</option>
+            <option value="medium">متوسط</option>
+            <option value="nosugar">بدون سكر</option>
+          </select>
+          <div class="muted2" id="tasteHint"></div>
+        </div>
 
         <div id="manualModeBlock" class="hidden">
           <label>وزن الشاي لكل 1 لتر</label>
@@ -546,6 +498,8 @@ function tasteLabel(v) {
   if (v === "nosugar") return "بدون سكر";
   return "مناسب";
 }
+
+const dynamicText = document.getElementById("dynamicText");
 const water1000Btn = document.getElementById("water1000");
 const water500Btn = document.getElementById("water500");
 const customWaterBtn = document.getElementById("customWaterBtn");
@@ -565,7 +519,6 @@ const teaModeBlock = document.getElementById("teaModeBlock");
 const manualModeBlock = document.getElementById("manualModeBlock");
 const manualSugarWrap = document.getElementById("manualSugarWrap");
 const manualSteepWrap = document.getElementById("manualSteepWrap");
-
 const manualTeaPerLiter = document.getElementById("manualTeaPerLiter");
 const manualSugarPerLiter = document.getElementById("manualSugarPerLiter");
 const manualSteepMinutes = document.getElementById("manualSteepMinutes");
@@ -678,6 +631,10 @@ function updateModeUI() {
   manualSteepWrap.classList.toggle("hidden", !isManual);
   tasteWrap.classList.toggle("hidden", isManual);
 
+  dynamicText.textContent = isManual
+    ? "أدخل وزنة الشاي وحدد كمية الماء"
+    : "اختر نوع الشاي وحدد كمية الماء";
+
   if (isManual) {
     teaResults.style.display = "none";
   }
@@ -747,10 +704,8 @@ function getManualTeaObject() {
 
   if (!Number.isFinite(teaBase) || teaBase <= 0) return null;
 
-  let sugarPerLiterPicked = 0;
-  if (tasteSel.value !== "nosugar" && Number.isFinite(sugarBase) && sugarBase >= 0) {
-    sugarPerLiterPicked = sugarBase;
-  }
+  const sugarPerLiterPicked =
+    Number.isFinite(sugarBase) && sugarBase >= 0 ? sugarBase : 0;
 
   return {
     brandLabel: "إدخال يدوي",
@@ -765,7 +720,7 @@ function getCurrentTeaObject() {
   return modeSelect.value === "manual" ? getManualTeaObject() : getSelectedTeaObject();
 }
 
-function getResultText(){
+function getResultText() {
   const liters = toLitersFromMl(waterMlInp.value);
   if (!Number.isFinite(liters)) return "";
 
@@ -776,10 +731,7 @@ function getResultText(){
     ? "حسب الوزنة"
     : tasteLabel(tasteSel.value);
 
-  const teaTypeText = teaObj.teaType && teaObj.teaType !== "—"
-    ? ` (${teaObj.teaType})`
-    : "";
-
+  const teaTypeText = teaObj.teaType ? ` (${teaObj.teaType})` : "";
   const teaGrams = smartNumber(teaObj.teaPerLiterPicked * liters);
   const sugarGrams = teaObj.sugarPerLiterPicked * liters;
 
@@ -797,7 +749,7 @@ function getResultText(){
 
 📌 النوع: ${teaObj.brandLabel}${teaTypeText}
 💧 الماء: ${waterMlInp.value} مل
-<i data-lucide="sparkles"></i> ${tasteText}
+✨ المذاق: ${tasteText}
 
 ⚖️ الشاي: ${teaGrams} جم
 🍬 السكر: ${sugarText}
@@ -863,6 +815,7 @@ function render() {
 
     tasteHint.textContent = "";
 
+    const isManual = modeSelect.value === "manual";
     const taste = tasteSel.value;
     const teaGrams = teaObj.teaPerLiterPicked * liters;
     const sugarGrams = teaObj.sugarPerLiterPicked === 0 ? 0 : teaObj.sugarPerLiterPicked * liters;
@@ -877,13 +830,13 @@ function render() {
         <div class="box">
           <div class="muted"><i data-lucide="scale"></i> وزن الشاي المطلوب</div>
           <div class="big">${smartNumber(teaGrams)} جم</div>
-          <div class="muted2">${tasteLabel(taste)} • لكل لتر: ${smartNumber(teaObj.teaPerLiterPicked)} جم</div>
+          <div class="muted2">${isManual ? "حسب الإدخال" : `${tasteLabel(taste)} • لكل لتر: ${smartNumber(teaObj.teaPerLiterPicked)} جم`}</div>
         </div>
 
         <div class="box">
           <div class="muted"><i data-lucide="candy"></i> السكر</div>
           <div class="big">${sugarText}</div>
-          <div class="muted2">${taste === "nosugar" ? "بدون سكر" : `لكل لتر: ${smartNumber(teaObj.sugarPerLiterPicked)} جم`}</div>
+          <div class="muted2">${teaObj.sugarPerLiterPicked === 0 ? "بدون سكر" : `لكل لتر: ${smartNumber(teaObj.sugarPerLiterPicked)} جم`}</div>
         </div>
 
         <div class="box">
@@ -905,8 +858,7 @@ function render() {
 
       <div class="note">
         <b>المنتج:</b> ${teaObj.brandLabel}${teaTypeText}<br/>
-        <b>المذاق:</b> ${tasteLabel(taste)}<br/>
-        <b>الماء:</b> ${waterMlInp.value} مل
+        <b>الماء:</b> ${waterMlInp.value} مل${isManual ? "" : `<br/><b>المذاق:</b> ${tasteLabel(taste)}`}
       </div>
     `;
 
@@ -920,6 +872,26 @@ function render() {
       </div>
     `;
   }
+}
+
+function setWaterPreset(value) {
+  water1000Btn.classList.remove("active");
+  water500Btn.classList.remove("active");
+  customWaterBtn.classList.remove("active");
+
+  waterMlInp.classList.add("hidden");
+  waterMlInp.classList.remove("active");
+  customWaterBtn.classList.remove("hidden");
+
+  if (value === 1000) {
+    water1000Btn.classList.add("active");
+    waterMlInp.value = "1000";
+  } else if (value === 500) {
+    water500Btn.classList.add("active");
+    waterMlInp.value = "500";
+  }
+
+  render();
 }
 
 teaSearch.addEventListener("input", () => {
@@ -951,33 +923,12 @@ document.addEventListener("click", (e) => {
 modeSelect.addEventListener("change", updateModeUI);
 teaSelect.addEventListener("change", render);
 typeSelect.addEventListener("change", render);
-waterMlInp.addEventListener("input", render);
 tasteSel.addEventListener("change", render);
 
 manualTeaPerLiter.addEventListener("input", render);
 manualSugarPerLiter.addEventListener("input", render);
 manualSteepMinutes.addEventListener("input", render);
 
-function setWaterPreset(value) {
-  water1000Btn.classList.remove("active");
-  water500Btn.classList.remove("active");
-  customWaterBtn.classList.remove("active");
-
-  waterMlInp.classList.add("hidden");
-  waterMlInp.classList.remove("active");
-  customWaterBtn.classList.remove("hidden");
-
-  if (value === 1000) {
-    water1000Btn.classList.add("active");
-    waterMlInp.value = "1000";
-  } else if (value === 500) {
-    water500Btn.classList.add("active");
-    waterMlInp.value = "500";
-  }
-
-  render();
-}
-
 water1000Btn.addEventListener("click", () => {
   setWaterPreset(1000);
 });
@@ -1005,63 +956,6 @@ waterMlInp.addEventListener("blur", () => {
   if (!waterMlInp.value) {
     waterMlInp.classList.add("hidden");
     waterMlInp.classList.remove("active");
-    customWaterBtn.classList.remove("hidden");
-    customWaterBtn.classList.add("active");
-  }
-});
-
-waterMlInp.addEventListener("input", () => {
-  render();
-});
-});
-
-function setWaterPreset(value) {
-  water1000Btn.classList.remove("active");
-  water500Btn.classList.remove("active");
-  customWaterBtn.classList.remove("active");
-
-  waterMlInp.classList.add("hidden");
-  waterMlInp.classList.remove("active");
-
-  if (value === 1000) {
-    water1000Btn.classList.add("active");
-    waterMlInp.value = "1000";
-  } else if (value === 500) {
-    water500Btn.classList.add("active");
-    waterMlInp.value = "500";
-  }
-
-  render();
-}
-
-water1000Btn.addEventListener("click", () => {
-  setWaterPreset(1000);
-});
-
-water500Btn.addEventListener("click", () => {
-  setWaterPreset(500);
-});
-
-customWaterBtn.addEventListener("click", () => {
-  water1000Btn.classList.remove("active");
-  water500Btn.classList.remove("active");
-  customWaterBtn.classList.add("hidden");
-
-  waterMlInp.classList.remove("hidden");
-  waterMlInp.classList.add("active");
-  waterMlInp.value = "";
-  waterMlInp.focus();
-});
-
-waterMlInp.addEventListener("input", () => {
-  render();
-});
-
-waterMlInp.addEventListener("blur", () => {
-  if (!waterMlInp.value) {
-    waterMlInp.classList.add("hidden");
-    waterMlInp.classList.remove("active");
-
     customWaterBtn.classList.remove("hidden");
     customWaterBtn.classList.add("active");
   }
@@ -1072,7 +966,6 @@ updateClearButton();
 updateModeUI();
 setWaterPreset(1000);
 render();
-
 </script>
 </body>
 </html>
