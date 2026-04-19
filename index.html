@@ -689,30 +689,47 @@ function getCurrentTeaObject() {
   return modeSelect.value === "manual" ? getManualTeaObject() : getSelectedTeaObject();
 }
 
-function getResultText() {
+function getResultText(){
   const liters = toLitersFromMl(waterMlInp.value);
   if (!Number.isFinite(liters)) return "";
 
   const teaObj = getCurrentTeaObject();
   if (!teaObj) return "";
 
-  const tasteText = tasteLabel(tasteSel.value);
-  const teaTypeText = teaObj.teaType ? ` — ${teaObj.teaType}` : "";
+  const tasteText = modeSelect.value === "manual"
+    ? "حسب الوزنة"
+    : tasteLabel(tasteSel.value);
+
+  const teaTypeText = teaObj.teaType && teaObj.teaType !== "—"
+    ? ` (${teaObj.teaType})`
+    : "";
+
   const teaGrams = smartNumber(teaObj.teaPerLiterPicked * liters);
-  const sugarText = teaObj.sugarPerLiterPicked === 0
-    ? "بدون سكر"
-    : `${smartNumber(teaObj.sugarPerLiterPicked * liters)} جم`;
-  const cups = Number(waterMlInp.value) / CUP_ML;
+  const sugarGrams = teaObj.sugarPerLiterPicked * liters;
+
+  let sugarText = "—";
+  if (teaObj.sugarPerLiterPicked === 0) {
+    sugarText = "بدون سكر";
+  } else if (teaObj.sugarPerLiterPicked) {
+    sugarText = `${smartNumber(sugarGrams)} جم`;
+  }
+
+  const cups = smartNumber(Number(waterMlInp.value) / CUP_ML);
 
   return `
-${teaObj.brandLabel}${teaTypeText}
-الماء: ${waterMlInp.value} مل
-المذاق: ${tasteText}
+☕ خدرة شاي
 
-وزن الشاي: ${teaGrams} جم
-السكر: ${sugarText}
-مدة الخدرة: ${minutesText(teaObj.steepMinutes)}
-كم بيالة تقريباً: ${smartNumber(cups)}
+📌 النوع: ${teaObj.brandLabel}${teaTypeText}
+💧 الماء: ${waterMlInp.value} مل
+🎯 المذاق: ${tasteText}
+
+⚖️ الشاي: ${teaGrams} جم
+🍬 السكر: ${sugarText}
+⏱️ الخدرة: ${minutesText(teaObj.steepMinutes)}
+☕ البيالات: ${cups} (تقريباً)
+
+تم الحساب عبر خدرة شاي
+https://khadra-t.netlify.app/
 `.trim();
 }
 
