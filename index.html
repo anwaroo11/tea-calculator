@@ -314,6 +314,37 @@ body {
   text-align: center;
   border: 1px dashed var(--border);
 }
+.water-options {
+  display: flex;
+  gap: 8px;
+}
+
+.waterBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: all .2s ease;
+  text-align: center;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.waterBtn.active {
+  background: rgba(255, 210, 166, 0.2);
+  border-color: rgba(255, 210, 166, 0.4);
+}
+
+.customInput {
+  border: 1px dashed var(--border);
+}
+
+.hidden {
+  display: none !important;
+}
   </style>
 </head>
 
@@ -355,21 +386,26 @@ body {
           <div class="muted2">يظهر فقط للبراند اللي له أكثر من نوع</div>
         </div>
 
-        <div>
-          <label>كمية الماء (مل)</label>
-<div id="waterOptions" class="water-options">
-  <button type="button" class="waterBtn active" data-ml="1000">1000 مل</button>
-  <button type="button" class="waterBtn" data-ml="500">500 مل</button>
-  <button type="button" id="customWaterBtn" class="waterBtn">أخرى</button>
+<div>
+  <label>كمية الماء (مل)</label>
 
-  <input id="waterMl" class="waterBtn customInput hidden"
-    type="number"
-    inputmode="decimal"
-    min="1"
-    placeholder="مثلاً 780">
+  <div id="waterOptions" class="water-options">
+    <button type="button" id="water1000" class="waterBtn active">1000 مل</button>
+    <button type="button" id="water500" class="waterBtn">500 مل</button>
+    <button type="button" id="customWaterBtn" class="waterBtn">أخرى</button>
+
+    <input
+      id="waterMl"
+      class="waterBtn customInput hidden"
+      type="number"
+      inputmode="decimal"
+      min="1"
+      placeholder="مثلاً 780"
+    />
+  </div>
+
+  <div class="muted2">اختر سريع أو أدخل الكمية بنفسك</div>
 </div>
-          <div class="muted2">مثال: 400 أو 500 أو 1000</div>
-        </div>
 
   <div id="tasteWrap">
 
@@ -510,14 +546,15 @@ function tasteLabel(v) {
   if (v === "nosugar") return "بدون سكر";
   return "مناسب";
 }
-
+const water1000Btn = document.getElementById("water1000");
+const water500Btn = document.getElementById("water500");
+const customWaterBtn = document.getElementById("customWaterBtn");
 const modeSelect = document.getElementById("modeSelect");
 const teaSearch = document.getElementById("teaSearch");
 const teaSelect = document.getElementById("teaSelect");
 const typeWrap = document.getElementById("typeWrap");
 const typeSelect = document.getElementById("typeSelect");
 const waterMlInp = document.getElementById("waterMl");
-const waterBtns = document.querySelectorAll(".waterBtn");
 const tasteSel = document.getElementById("taste");
 const tasteHint = document.getElementById("tasteHint");
 const output = document.getElementById("output");
@@ -923,20 +960,6 @@ manualSteepMinutes.addEventListener("input", render);
 
 const waterBtns = document.querySelectorAll(".waterBtn");
 const customWaterBtn = document.getElementById("customWaterBtn");
-waterBtns.forEach(btn => {
-  if (btn.id === "customWaterBtn") return;
-
-  btn.addEventListener("click", () => {
-    waterBtns.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    customWaterBtn.classList.remove("hidden");
-    waterMlInp.classList.add("hidden");
-
-    waterMlInp.value = btn.dataset.ml;
-    render();
-  });
-});
 
 customWaterBtn.addEventListener("click", () => {
   waterBtns.forEach(b => b.classList.remove("active"));
@@ -964,9 +987,62 @@ waterMlInp.addEventListener("input", () => {
 });
 });
 
+function setWaterPreset(value) {
+  water1000Btn.classList.remove("active");
+  water500Btn.classList.remove("active");
+  customWaterBtn.classList.remove("active");
+
+  waterMlInp.classList.add("hidden");
+  waterMlInp.classList.remove("active");
+
+  if (value === 1000) {
+    water1000Btn.classList.add("active");
+    waterMlInp.value = "1000";
+  } else if (value === 500) {
+    water500Btn.classList.add("active");
+    waterMlInp.value = "500";
+  }
+
+  render();
+}
+
+water1000Btn.addEventListener("click", () => {
+  setWaterPreset(1000);
+});
+
+water500Btn.addEventListener("click", () => {
+  setWaterPreset(500);
+});
+
+customWaterBtn.addEventListener("click", () => {
+  water1000Btn.classList.remove("active");
+  water500Btn.classList.remove("active");
+  customWaterBtn.classList.add("hidden");
+
+  waterMlInp.classList.remove("hidden");
+  waterMlInp.classList.add("active");
+  waterMlInp.value = "";
+  waterMlInp.focus();
+});
+
+waterMlInp.addEventListener("input", () => {
+  render();
+});
+
+waterMlInp.addEventListener("blur", () => {
+  if (!waterMlInp.value) {
+    waterMlInp.classList.add("hidden");
+    waterMlInp.classList.remove("active");
+
+    customWaterBtn.classList.remove("hidden");
+    customWaterBtn.classList.add("active");
+  }
+});
+
 populateMainSelect();
 updateClearButton();
 updateModeUI();
+setWaterPreset(1000);
 render();
 
 </script>
