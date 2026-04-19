@@ -286,6 +286,30 @@ body {
     .tea-result-item:hover {
       background: rgba(255,244,232,0.08);
     }
+    .water-options {
+  display: flex;
+  gap: 8px;
+}
+
+.waterBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.waterBtn.active {
+  background: rgba(255, 210, 166, 0.2);
+  border-color: rgba(255, 210, 166, 0.4);
+}
+
+.waterBtn:hover {
+  transform: translateY(-2px);
+}
   </style>
 </head>
 
@@ -329,7 +353,13 @@ body {
 
         <div>
           <label>كمية الماء (مل)</label>
-          <input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" />
+          <div id="waterOptions" class="water-options">
+  <button class="waterBtn active" data-ml="1000">1000 مل</button>
+  <button class="waterBtn" data-ml="500">500 مل</button>
+  <button class="waterBtn" data-ml="custom">أخرى</button>
+</div>
+
+<input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" class="hidden" placeholder="اكتب الكمية بالمل" />
           <div class="muted2">مثال: 400 أو 500 أو 1000</div>
         </div>
 
@@ -479,6 +509,7 @@ const teaSelect = document.getElementById("teaSelect");
 const typeWrap = document.getElementById("typeWrap");
 const typeSelect = document.getElementById("typeSelect");
 const waterMlInp = document.getElementById("waterMl");
+const waterBtns = document.querySelectorAll(".waterBtn");
 const tasteSel = document.getElementById("taste");
 const tasteHint = document.getElementById("tasteHint");
 const output = document.getElementById("output");
@@ -882,10 +913,35 @@ manualTeaPerLiter.addEventListener("input", render);
 manualSugarPerLiter.addEventListener("input", render);
 manualSteepMinutes.addEventListener("input", render);
 
+waterBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    waterBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const val = btn.dataset.ml;
+
+    if (val === "custom") {
+      waterMlInp.classList.remove("hidden");
+      waterMlInp.focus();
+    } else {
+      waterMlInp.classList.add("hidden");
+      waterMlInp.value = val;
+      render();
+    }
+  });
+});
+
+waterMlInp.addEventListener("input", () => {
+  waterBtns.forEach(b => b.classList.remove("active"));
+  document.querySelector('[data-ml="custom"]').classList.add("active");
+  render();
+});
+
 populateMainSelect();
 updateClearButton();
 updateModeUI();
 render();
+
 </script>
 </body>
 </html>
