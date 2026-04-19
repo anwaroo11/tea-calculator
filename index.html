@@ -358,14 +358,15 @@ body {
         <div>
           <label>كمية الماء (مل)</label>
 <div id="waterOptions" class="water-options">
-  <button class="waterBtn active" data-ml="1000">1000 مل</button>
-  <button class="waterBtn" data-ml="500">500 مل</button>
+  <button type="button" class="waterBtn active" data-ml="1000">1000 مل</button>
+  <button type="button" class="waterBtn" data-ml="500">500 مل</button>
+  <button type="button" id="customWaterBtn" class="waterBtn">أخرى</button>
 
   <input id="waterMl" class="waterBtn customInput hidden"
     type="number"
     inputmode="decimal"
     min="1"
-    placeholder="أخرى">
+    placeholder="مثلاً 780">
 </div>
           <div class="muted2">مثال: 400 أو 500 أو 1000</div>
         </div>
@@ -920,26 +921,44 @@ manualTeaPerLiter.addEventListener("input", render);
 manualSugarPerLiter.addEventListener("input", render);
 manualSteepMinutes.addEventListener("input", render);
 
+const waterBtns = document.querySelectorAll(".waterBtn");
+const customWaterBtn = document.getElementById("customWaterBtn");
 waterBtns.forEach(btn => {
+  if (btn.id === "customWaterBtn") return;
+
   btn.addEventListener("click", () => {
     waterBtns.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
+    customWaterBtn.classList.remove("hidden");
     waterMlInp.classList.add("hidden");
 
-    const val = btn.dataset.ml;
-    waterMlInp.value = val;
+    waterMlInp.value = btn.dataset.ml;
     render();
   });
-  
-  // لما يضغط على input "أخرى"
-waterMlInp.addEventListener("focus", () => {
-  waterBtns.forEach(b => b.classList.remove("active"));
-  waterMlInp.classList.remove("hidden");
-  waterMlInp.classList.add("active");
 });
 
-// لما يكتب رقم
+customWaterBtn.addEventListener("click", () => {
+  waterBtns.forEach(b => b.classList.remove("active"));
+
+  customWaterBtn.classList.add("hidden");
+  waterMlInp.classList.remove("hidden");
+  waterMlInp.classList.add("active");
+
+  waterMlInp.value = "";
+  waterMlInp.focus();
+});
+
+waterMlInp.addEventListener("blur", () => {
+  if (!waterMlInp.value) {
+    waterMlInp.classList.add("hidden");
+    waterMlInp.classList.remove("active");
+
+    customWaterBtn.classList.remove("hidden");
+    customWaterBtn.classList.add("active");
+  }
+});
+
 waterMlInp.addEventListener("input", () => {
   render();
 });
