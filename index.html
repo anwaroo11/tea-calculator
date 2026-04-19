@@ -310,6 +310,10 @@ body {
 .waterBtn:hover {
   transform: translateY(-2px);
 }
+.customInput {
+  text-align: center;
+  border: 1px dashed var(--border);
+}
   </style>
 </head>
 
@@ -353,13 +357,16 @@ body {
 
         <div>
           <label>كمية الماء (مل)</label>
-          <div id="waterOptions" class="water-options">
+<div id="waterOptions" class="water-options">
   <button class="waterBtn active" data-ml="1000">1000 مل</button>
   <button class="waterBtn" data-ml="500">500 مل</button>
-  <button class="waterBtn" data-ml="custom">أخرى</button>
-</div>
 
-<input id="waterMl" type="number" inputmode="decimal" min="1" value="1000" class="hidden" placeholder="اكتب الكمية بالمل" />
+  <input id="waterMl" class="waterBtn customInput hidden"
+    type="number"
+    inputmode="decimal"
+    min="1"
+    placeholder="أخرى">
+</div>
           <div class="muted2">مثال: 400 أو 500 أو 1000</div>
         </div>
 
@@ -918,23 +925,12 @@ waterBtns.forEach(btn => {
     waterBtns.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
+    waterMlInp.classList.add("hidden");
+
     const val = btn.dataset.ml;
-
-    if (val === "custom") {
-      waterMlInp.classList.remove("hidden");
-      waterMlInp.focus();
-    } else {
-      waterMlInp.classList.add("hidden");
-      waterMlInp.value = val;
-      render();
-    }
+    waterMlInp.value = val;
+    render();
   });
-});
-
-waterMlInp.addEventListener("input", () => {
-  waterBtns.forEach(b => b.classList.remove("active"));
-  document.querySelector('[data-ml="custom"]').classList.add("active");
-  render();
 });
 
 populateMainSelect();
